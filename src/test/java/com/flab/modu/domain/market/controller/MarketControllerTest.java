@@ -113,7 +113,7 @@ class MarketControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
         )
         .andDo(print())
-        .andExpect(status().isInternalServerError())
+        .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.message").exists())
     ;
   }
@@ -132,7 +132,7 @@ class MarketControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
         )
         .andDo(print())
-        .andExpect(status().isInternalServerError())
+        .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.message").exists())
     ;
 
@@ -142,7 +142,7 @@ class MarketControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
         )
         .andDo(print())
-        .andExpect(status().isInternalServerError())
+        .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.message").exists())
     ;
 
@@ -152,7 +152,7 @@ class MarketControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
         )
         .andDo(print())
-        .andExpect(status().isInternalServerError())
+        .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.message").exists())
     ;
   }
