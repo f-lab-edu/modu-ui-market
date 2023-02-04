@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.flab.modu.users.domain.common.UserRole;
 import com.flab.modu.users.domain.entity.User;
-import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,10 +22,9 @@ class UserRepositoryTest {
     private void insertTestData() {
         User user = User.builder()
             .email("test@modu.com")
+            .name("test")
             .password("testPwd")
             .role(UserRole.NORMAL)
-            .createdAt(LocalDateTime.now())
-            .modifiedAt(LocalDateTime.now())
             .build();
         User savedUser = userRepository.save(user);
     }

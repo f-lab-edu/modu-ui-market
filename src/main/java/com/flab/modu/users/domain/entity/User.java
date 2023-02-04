@@ -27,6 +27,7 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(nullable = false)
     private String name;
 
     @Column(nullable = false)
@@ -37,21 +38,19 @@ public class User {
 
     private String phoneNumber;
 
-    @Column(nullable = false, updatable = false)
+//    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private LocalDateTime modifiedAt;
 
     @Builder
-    public User(Long id, String email, String name, String password, UserRole role, String phoneNumber, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+    public User(Long id, String email, String name, String password, UserRole role, String phoneNumber) {
         this.id = id;
         this.email = email;
         this.name = name;
         this.password = password;
         this.role = role;
         this.phoneNumber = phoneNumber;
-        this.createdAt = createdAt;
-        this.modifiedAt = modifiedAt;
     }
 }
