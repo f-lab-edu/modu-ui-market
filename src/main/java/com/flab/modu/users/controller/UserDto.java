@@ -21,7 +21,6 @@ public class UserDto {
 
         @NotNull
         private String name;
-        private UserRole role;
         private String phoneNumber;
 
         @Builder
@@ -30,7 +29,6 @@ public class UserDto {
             this.email = email;
             this.password = password;
             this.name = name;
-            this.role = role;
             this.phoneNumber = phoneNumber;
         }
 
@@ -39,7 +37,7 @@ public class UserDto {
                 .email(email)
                 .password(password)
                 .name(name)
-                .role(role)
+                .role(UserRole.NORMAL)
                 .phoneNumber(phoneNumber)
                 .build();
         }
