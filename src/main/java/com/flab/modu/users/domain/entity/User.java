@@ -24,7 +24,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String email;
 
     @Column(nullable = false)
@@ -38,10 +38,8 @@ public class User {
 
     private String phoneNumber;
 
-//    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-//    @Column(nullable = false)
     private LocalDateTime modifiedAt;
 
     @Builder

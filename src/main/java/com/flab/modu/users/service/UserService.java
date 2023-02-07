@@ -1,6 +1,6 @@
 package com.flab.modu.users.service;
 
-import com.flab.modu.users.controller.UserDto.SaveRequest;
+import com.flab.modu.users.controller.UserDto;
 import com.flab.modu.users.exception.DuplicatedEmailException;
 import com.flab.modu.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,11 +14,11 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public void createUser(SaveRequest saveRequest) {
-        if (checkEmailDuplicate(saveRequest.getEmail())) {
+    public void createUser(UserDto.CreateRequest createRequest) {
+        if (checkEmailDuplicate(createRequest.getEmail())) {
             throw new DuplicatedEmailException();
         }
-        userRepository.save(saveRequest.toEntity());
+        userRepository.save(createRequest.toEntity());
     }
 
     public boolean checkEmailDuplicate(String email) {

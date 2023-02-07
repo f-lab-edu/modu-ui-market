@@ -1,11 +1,10 @@
 package com.flab.modu.users.service;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 
-import com.flab.modu.users.controller.UserDto.SaveRequest;
+import com.flab.modu.users.controller.UserDto;
 import com.flab.modu.users.exception.DuplicatedEmailException;
 import com.flab.modu.users.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -24,8 +23,8 @@ class UserServiceTest {
     @InjectMocks
     private UserService userService;
 
-    private SaveRequest createTestUserData() {
-        return SaveRequest.builder()
+    private UserDto.CreateRequest createTestUserData() {
+        return UserDto.CreateRequest.builder()
             .email("test@modu.com")
             .password("test123")
             .name("test")
@@ -36,20 +35,13 @@ class UserServiceTest {
     @DisplayName("이메일 중복은 회원가입에 실패한다.")
     public void emailDuplicate() {
         // given
-        SaveRequest testUserData = createTestUserData();
-        userService.createUser(testUserData);
-        String existingEmail = "test@modu.com";
+        UserDto.CreateRequest createRequest = createTestUserData();
+        given(userRepository.existsByEmail("test@modu.com")).willReturn(true);
 
         // when
-        when(userRepository.existsByEmail(existingEmail)).thenReturn(true);
-        SaveRequest saveRequest = SaveRequest.builder()
-            .email(existingEmail)
-            .password("test")
-            .name("test")
-            .build();
+        assertThrows(DuplicatedEmailException.class, () -> userService.createUser(createRequest));
 
         // then
-        assertThrows(DuplicatedEmailException.class, () -> userService.createUser(saveRequest));
-        verify(userRepository, atLeastOnce()).existsByEmail(existingEmail);
+        then(userRepository).should().existsByEmail("test@modu.com");
     }
 }

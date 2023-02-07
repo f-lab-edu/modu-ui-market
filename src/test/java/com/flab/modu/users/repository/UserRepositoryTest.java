@@ -24,7 +24,7 @@ class UserRepositoryTest {
             .email("test@modu.com")
             .name("test")
             .password("testPwd")
-            .role(UserRole.NORMAL)
+            .role(UserRole.BUYER)
             .build();
         User savedUser = userRepository.save(user);
     }

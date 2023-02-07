@@ -12,7 +12,7 @@ public class UserDto {
 
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    public static class SaveRequest {
+    public static class CreateRequest {
         @NotNull
         private String email;
 
@@ -24,8 +24,7 @@ public class UserDto {
         private String phoneNumber;
 
         @Builder
-        public SaveRequest(String email, String password, String name, UserRole role,
-            String phoneNumber) {
+        public CreateRequest(String email, String password, String name, String phoneNumber) {
             this.email = email;
             this.password = password;
             this.name = name;
@@ -37,7 +36,7 @@ public class UserDto {
                 .email(email)
                 .password(password)
                 .name(name)
-                .role(UserRole.NORMAL)
+                .role(UserRole.BUYER)
                 .phoneNumber(phoneNumber)
                 .build();
         }

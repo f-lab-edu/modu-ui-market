@@ -9,7 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.flab.modu.users.controller.UserDto.SaveRequest;
+import com.flab.modu.users.controller.UserDto.CreateRequest;
 import com.flab.modu.users.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
@@ -27,11 +26,11 @@ import org.springframework.test.web.servlet.MockMvc;
 @ExtendWith(RestDocumentationExtension.class)
 @AutoConfigureRestDocs
 @WebMvcTest(UserController.class)
-@MockBean(JpaMetamodelMappingContext.class)
 class UserControllerTest {
 
     @MockBean
     private UserService userService;
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -41,18 +40,18 @@ class UserControllerTest {
     @Test
     @DisplayName("회원가입 - 회원가입에 성공한다.")
     void createUser_successful() throws Exception {
-        SaveRequest saveRequest = SaveRequest.builder()
+        UserDto.CreateRequest createRequest = CreateRequest.builder()
             .email("test123@modu.com")
             .password("test123")
             .name("정찬우")
             .phoneNumber("01020881464")
             .build();
 
-        doNothing().when(userService).createUser(saveRequest);
+        doNothing().when(userService).createUser(createRequest);
 
-        mockMvc.perform(post("/user")
+        mockMvc.perform(post("/users")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(saveRequest)))
+                .content(objectMapper.writeValueAsString(createRequest)))
             .andDo(print())
             .andExpect(status().isCreated())
             .andDo(document("create-user", requestFields(

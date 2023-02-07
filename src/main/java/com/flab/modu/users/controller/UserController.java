@@ -1,6 +1,5 @@
 package com.flab.modu.users.controller;
 
-import com.flab.modu.users.controller.UserDto.SaveRequest;
 import com.flab.modu.users.service.UserService;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +15,9 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/user")
-    public ResponseEntity<Void> createUser(@RequestBody @Valid SaveRequest saveRequest) {
-        userService.createUser(saveRequest);
+    @PostMapping("/users")
+    public ResponseEntity<Void> createUser(@RequestBody @Valid UserDto.CreateRequest createRequest) {
+        userService.createUser(createRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }
