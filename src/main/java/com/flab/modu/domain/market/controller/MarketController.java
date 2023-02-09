@@ -31,14 +31,6 @@ public class MarketController {
     this.marketRepository = marketRepository;
   }
 
-  @ExceptionHandler
-  public ResponseEntity errorHandler(MarketDataBindingException e) {
-
-    return ResponseEntity.badRequest().body(
-        "{\"message\":\"" + e.getBindingResult().getAllErrors().get(0).getDefaultMessage() + "\"}"
-    );
-  }
-
   @InitBinder
   protected void initBinder(WebDataBinder binder) {
     binder.addValidators(marketValidator);
