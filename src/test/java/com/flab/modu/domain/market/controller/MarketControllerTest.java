@@ -35,7 +35,7 @@ class MarketControllerTest {
     Market market = Market.of("yujin", "Yujin's Market", "yujinMarket");
     String json = objectMapper.writeValueAsString(market);
 
-    mockMvc.perform(post("/market")
+    mockMvc.perform(post("/markets")
             .content(json)
             .contentType(MediaType.APPLICATION_JSON)
         )
@@ -71,7 +71,7 @@ class MarketControllerTest {
     Market market = Market.of(sellerId, marketName, url);
     String json = objectMapper.writeValueAsString(market);
 
-    mockMvc.perform(post("/market")
+    mockMvc.perform(post("/markets")
             .content(json)
             .contentType(MediaType.APPLICATION_JSON)
         )
@@ -108,7 +108,7 @@ class MarketControllerTest {
     Market market = Market.of(sellerId, marketName, url);
     String json = objectMapper.writeValueAsString(market);
 
-    mockMvc.perform(post("/market")
+    mockMvc.perform(post("/markets")
             .content(json)
             .contentType(MediaType.APPLICATION_JSON)
         )
@@ -127,7 +127,7 @@ class MarketControllerTest {
     String url3 = "url!!";
 
     String json = objectMapper.writeValueAsString(Market.of(sellerId, marketName, url1));
-    mockMvc.perform(post("/market")
+    mockMvc.perform(post("/markets")
             .content(json)
             .contentType(MediaType.APPLICATION_JSON)
         )
@@ -137,7 +137,7 @@ class MarketControllerTest {
     ;
 
     json = objectMapper.writeValueAsString(Market.of(sellerId, marketName, url2));
-    mockMvc.perform(post("/market")
+    mockMvc.perform(post("/markets")
             .content(json)
             .contentType(MediaType.APPLICATION_JSON)
         )
@@ -147,7 +147,7 @@ class MarketControllerTest {
     ;
 
     json = objectMapper.writeValueAsString(Market.of(sellerId, marketName, url3));
-    mockMvc.perform(post("/market")
+    mockMvc.perform(post("/markets")
             .content(json)
             .contentType(MediaType.APPLICATION_JSON)
         )
