@@ -12,7 +12,8 @@ public class ControllerExceptionHandler {
     public ResponseEntity errorHandler(MarketDataBindingException e) {
 
         return ResponseEntity.badRequest().body(
-            "{\"message\":\"" + e.getBindingResult().getAllErrors().get(0).getDefaultMessage() + "\"}"
+            "{\"message\":\"" + e.getBindingResult().getAllErrors().get(0).getDefaultMessage()
+                + "\"}"
         );
     }
 }

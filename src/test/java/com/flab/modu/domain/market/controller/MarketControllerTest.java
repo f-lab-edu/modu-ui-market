@@ -24,136 +24,136 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureMockMvc
 class MarketControllerTest {
 
-  @Autowired
-  private MockMvc mockMvc;
+    @Autowired
+    private MockMvc mockMvc;
 
-  @Autowired
-  private ObjectMapper objectMapper;
+    @Autowired
+    private ObjectMapper objectMapper;
 
-  @Test
-  public void createMarket() throws Exception {
-    Market market = Market.of("yujin", "Yujin's Market", "yujinMarket");
-    String json = objectMapper.writeValueAsString(market);
+    @Test
+    public void createMarket() throws Exception {
+        Market market = Market.of("yujin", "Yujin's Market", "yujinMarket");
+        String json = objectMapper.writeValueAsString(market);
 
-    mockMvc.perform(post("/markets")
-            .content(json)
-            .contentType(MediaType.APPLICATION_JSON)
-        )
-        .andDo(print())
-        .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.name").value(CoreMatchers.equalTo("Yujin's Market")))
-        .andExpect(jsonPath("$.url").value(CoreMatchers.equalTo("yujinMarket")))
-        .andExpect(jsonPath("$.sellerId").value(CoreMatchers.equalTo("yujin")))
-        .andExpect(jsonPath("$.status").value(CoreMatchers.equalTo("ACTIVE")))
-        .andExpect(jsonPath("$.id").value(CoreMatchers.notNullValue()))
-        .andExpect(jsonPath("$.createdAt").value(CoreMatchers.notNullValue()))
-        .andExpect(jsonPath("$.modifiedAt").value(CoreMatchers.notNullValue()))
-    ;
-  }
-
-  @Test
-  public void createMarketByMaximumLangthParams() throws Exception {
-    String sellerId = "01234567890123456789012345678901234567890123456789";
-    String marketName = "";
-    for (int i = 0; i < 200; i++) {
-      marketName += "일";
-    }
-    String url = "";
-    for (int i = 0; i < 10; i++) {
-      url += "ThisIsUrls";
+        mockMvc.perform(post("/markets")
+                .content(json)
+                .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.name").value(CoreMatchers.equalTo("Yujin's Market")))
+            .andExpect(jsonPath("$.url").value(CoreMatchers.equalTo("yujinMarket")))
+            .andExpect(jsonPath("$.sellerId").value(CoreMatchers.equalTo("yujin")))
+            .andExpect(jsonPath("$.status").value(CoreMatchers.equalTo("ACTIVE")))
+            .andExpect(jsonPath("$.id").value(CoreMatchers.notNullValue()))
+            .andExpect(jsonPath("$.createdAt").value(CoreMatchers.notNullValue()))
+            .andExpect(jsonPath("$.modifiedAt").value(CoreMatchers.notNullValue()))
+        ;
     }
 
-    Assertions.assertThat(sellerId.length()).isEqualTo(50);
-    Assertions.assertThat(marketName.length()).isEqualTo(200);
-    Assertions.assertThat(url.length()).isEqualTo(100);
+    @Test
+    public void createMarketByMaximumLangthParams() throws Exception {
+        String sellerId = "01234567890123456789012345678901234567890123456789";
+        String marketName = "";
+        for (int i = 0; i < 200; i++) {
+            marketName += "일";
+        }
+        String url = "";
+        for (int i = 0; i < 10; i++) {
+            url += "ThisIsUrls";
+        }
 
-    Market market = Market.of(sellerId, marketName, url);
-    String json = objectMapper.writeValueAsString(market);
+        Assertions.assertThat(sellerId.length()).isEqualTo(50);
+        Assertions.assertThat(marketName.length()).isEqualTo(200);
+        Assertions.assertThat(url.length()).isEqualTo(100);
 
-    mockMvc.perform(post("/markets")
-            .content(json)
-            .contentType(MediaType.APPLICATION_JSON)
-        )
-        .andDo(print())
-        .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.id").value(CoreMatchers.notNullValue()))
-        .andExpect(jsonPath("$.createdAt").value(CoreMatchers.notNullValue()))
-        .andExpect(jsonPath("$.modifiedAt").value(CoreMatchers.notNullValue()))
-    ;
-  }
+        Market market = Market.of(sellerId, marketName, url);
+        String json = objectMapper.writeValueAsString(market);
 
-  @Test
-  public void failCreatingMarketByOverMaximumLangthParams() throws Exception {
-    String sellerId = "01234567890123456789012345678901234567890123456789";
-    sellerId += "1";
-
-    String marketName = "";
-    for (int i = 0; i < 200; i++) {
-      marketName += "일";
+        mockMvc.perform(post("/markets")
+                .content(json)
+                .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.id").value(CoreMatchers.notNullValue()))
+            .andExpect(jsonPath("$.createdAt").value(CoreMatchers.notNullValue()))
+            .andExpect(jsonPath("$.modifiedAt").value(CoreMatchers.notNullValue()))
+        ;
     }
-    marketName += "1";
 
-    String url = "";
-    for (int i = 0; i < 10; i++) {
-      url += "ThisIsUrls";
+    @Test
+    public void failCreatingMarketByOverMaximumLangthParams() throws Exception {
+        String sellerId = "01234567890123456789012345678901234567890123456789";
+        sellerId += "1";
+
+        String marketName = "";
+        for (int i = 0; i < 200; i++) {
+            marketName += "일";
+        }
+        marketName += "1";
+
+        String url = "";
+        for (int i = 0; i < 10; i++) {
+            url += "ThisIsUrls";
+        }
+        url += "1";
+
+        Assertions.assertThat(sellerId.length()).isEqualTo(51);
+        Assertions.assertThat(marketName.length()).isEqualTo(201);
+        Assertions.assertThat(url.length()).isEqualTo(101);
+
+        Market market = Market.of(sellerId, marketName, url);
+        String json = objectMapper.writeValueAsString(market);
+
+        mockMvc.perform(post("/markets")
+                .content(json)
+                .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message").exists())
+        ;
     }
-    url += "1";
 
-    Assertions.assertThat(sellerId.length()).isEqualTo(51);
-    Assertions.assertThat(marketName.length()).isEqualTo(201);
-    Assertions.assertThat(url.length()).isEqualTo(101);
+    @Test
+    public void failCreatingMarketByWrongParams() throws Exception {
+        String sellerId = "yujin";
+        String marketName = "이름은 아무거나";
+        String url1 = "한글입력";
+        String url2 = "include blank";
+        String url3 = "url!!";
 
-    Market market = Market.of(sellerId, marketName, url);
-    String json = objectMapper.writeValueAsString(market);
+        String json = objectMapper.writeValueAsString(Market.of(sellerId, marketName, url1));
+        mockMvc.perform(post("/markets")
+                .content(json)
+                .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message").exists())
+        ;
 
-    mockMvc.perform(post("/markets")
-            .content(json)
-            .contentType(MediaType.APPLICATION_JSON)
-        )
-        .andDo(print())
-        .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.message").exists())
-    ;
-  }
+        json = objectMapper.writeValueAsString(Market.of(sellerId, marketName, url2));
+        mockMvc.perform(post("/markets")
+                .content(json)
+                .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message").exists())
+        ;
 
-  @Test
-  public void failCreatingMarketByWrongParams() throws Exception {
-    String sellerId = "yujin";
-    String marketName = "이름은 아무거나";
-    String url1 = "한글입력";
-    String url2 = "include blank";
-    String url3 = "url!!";
-
-    String json = objectMapper.writeValueAsString(Market.of(sellerId, marketName, url1));
-    mockMvc.perform(post("/markets")
-            .content(json)
-            .contentType(MediaType.APPLICATION_JSON)
-        )
-        .andDo(print())
-        .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.message").exists())
-    ;
-
-    json = objectMapper.writeValueAsString(Market.of(sellerId, marketName, url2));
-    mockMvc.perform(post("/markets")
-            .content(json)
-            .contentType(MediaType.APPLICATION_JSON)
-        )
-        .andDo(print())
-        .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.message").exists())
-    ;
-
-    json = objectMapper.writeValueAsString(Market.of(sellerId, marketName, url3));
-    mockMvc.perform(post("/markets")
-            .content(json)
-            .contentType(MediaType.APPLICATION_JSON)
-        )
-        .andDo(print())
-        .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.message").exists())
-    ;
-  }
+        json = objectMapper.writeValueAsString(Market.of(sellerId, marketName, url3));
+        mockMvc.perform(post("/markets")
+                .content(json)
+                .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message").exists())
+        ;
+    }
 }
