@@ -2,11 +2,9 @@ package com.flab.modu.users.service;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 
 import com.flab.modu.users.controller.UserDto;
 import com.flab.modu.users.domain.common.UserRole;
@@ -40,8 +38,8 @@ class UserServiceTest {
         userService.createUser(createRequest);
 
         // then
+        then(userRepository).should().existsByEmail(anyString());
         then(userRepository).should().save(any(User.class));
-        verify(userRepository, atLeastOnce()).existsByEmail(any());
     }
 
     @Test
@@ -57,8 +55,7 @@ class UserServiceTest {
 
         // then
         then(userRepository).should().existsByEmail("test@modu.com");
-        verify(userRepository, atLeastOnce()).existsByEmail(existingEmail);
-        verify(userRepository, never()).save(any());
+        then(userRepository).shouldHaveNoMoreInteractions();
     }
 
     private UserDto.CreateRequest createTestUserData() {

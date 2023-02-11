@@ -1,8 +1,10 @@
 package com.flab.modu.users.controller;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.ArgumentMatchers.refEq;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.BDDMockito.willThrow;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
@@ -50,7 +52,7 @@ class UserControllerTest {
             .phoneNumber("01012345678")
             .build();
 
-        doNothing().when(userService).createUser(createRequest);
+        willDoNothing().given(userService).createUser(createRequest);
 
         mockMvc.perform(post("/users")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -69,6 +71,8 @@ class UserControllerTest {
                         .description("휴대폰 번호")
                 )
             ));
+
+        then(userService).should().createUser(refEq(createRequest));
     }
 
     @Test
@@ -81,7 +85,7 @@ class UserControllerTest {
             .phoneNumber("01012345678")
             .build();
 
-        doThrow(new DuplicatedEmailException()).when(userService).createUser(any());
+        willThrow(new DuplicatedEmailException()).given(userService).createUser(any());
 
         mockMvc.perform(post("/users")
                 .contentType(MediaType.APPLICATION_JSON)
