@@ -1,10 +1,16 @@
 package com.flab.modu.users.service;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 import com.flab.modu.users.controller.UserDto;
+import com.flab.modu.users.domain.common.UserRole;
+import com.flab.modu.users.domain.entity.User;
 import com.flab.modu.users.exception.DuplicatedEmailException;
 import com.flab.modu.users.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -23,25 +29,54 @@ class UserServiceTest {
     @InjectMocks
     private UserService userService;
 
-    private UserDto.CreateRequest createTestUserData() {
-        return UserDto.CreateRequest.builder()
-            .email("test@modu.com")
-            .password("test123")
-            .name("test")
-            .build();
+    @Test
+    @DisplayName("정상적으로 회원가입에 성공한다.")
+    public void createUser_successful() {
+        // given
+        UserDto.CreateRequest createRequest = createTestUserData();
+        given(userRepository.save(any(User.class))).willReturn(createUser());
+
+        // when
+        userService.createUser(createRequest);
+
+        // then
+        then(userRepository).should().save(any(User.class));
+        verify(userRepository, atLeastOnce()).existsByEmail(any());
     }
 
     @Test
     @DisplayName("이메일 중복은 회원가입에 실패한다.")
-    public void emailDuplicate() {
+    public void emailDuplicated_createUser_failure() {
         // given
         UserDto.CreateRequest createRequest = createTestUserData();
-        given(userRepository.existsByEmail("test@modu.com")).willReturn(true);
+        String existingEmail = "test@modu.com";
+        given(userRepository.existsByEmail(existingEmail)).willReturn(true);
 
         // when
         assertThrows(DuplicatedEmailException.class, () -> userService.createUser(createRequest));
 
         // then
         then(userRepository).should().existsByEmail("test@modu.com");
+        verify(userRepository, atLeastOnce()).existsByEmail(existingEmail);
+        verify(userRepository, never()).save(any());
+    }
+
+    private UserDto.CreateRequest createTestUserData() {
+        return UserDto.CreateRequest.builder()
+            .email("test@modu.com")
+            .password("test12345@")
+            .name("테스트네임")
+            .phoneNumber("01012345678")
+            .build();
+    }
+
+    private User createUser() {
+        return User.builder()
+            .email("test@modu.com")
+            .name("테스트네임")
+            .password("test12345@")
+            .role(UserRole.BUYER)
+            .phoneNumber("01012345678")
+            .build();
     }
 }
