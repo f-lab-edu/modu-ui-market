@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -29,22 +30,18 @@ public class Market {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Setter
     @Column(nullable = false, length = 50)
     @NotNull
     private String sellerId;
 
-    @Setter
     @Column(nullable = false, length = 200)
     @NotNull
     private String name;
 
-    @Setter
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private MarketStatus status;
 
-    @Setter
     @Column(nullable = false, length = 100)
     @NotNull
     private String url;
@@ -60,14 +57,12 @@ public class Market {
     public Market() {
     }
 
-    public Market(String sellerId, String name, String url) {
+    @Builder
+    public Market(String sellerId, String name, String url, MarketStatus status) {
         this.sellerId = sellerId;
         this.name = name;
         this.url = url;
-    }
-
-    public static Market of(String sellerId, String name, String url) {
-        return new Market(sellerId, name, url);
+        this.status = status;
     }
 
     @Override

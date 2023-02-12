@@ -7,7 +7,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.flab.modu.domain.market.domain.Market;
 import org.assertj.core.api.Assertions;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
@@ -32,8 +31,13 @@ class MarketControllerTest {
 
     @Test
     public void createMarket() throws Exception {
-        Market market = Market.of("yujin", "Yujin's Market", "yujinMarket");
-        String json = objectMapper.writeValueAsString(market);
+        MarketDto.CreateRequest createMarketRequest = MarketDto.CreateRequest.builder()
+            .sellerId("yujin")
+            .name("Yujin's Market")
+            .url("yujinMarket")
+            .build();
+
+        String json = objectMapper.writeValueAsString(createMarketRequest);
 
         mockMvc.perform(post("/markets")
                 .content(json)
@@ -45,7 +49,6 @@ class MarketControllerTest {
             .andExpect(jsonPath("$.name").value(CoreMatchers.equalTo("Yujin's Market")))
             .andExpect(jsonPath("$.url").value(CoreMatchers.equalTo("yujinMarket")))
             .andExpect(jsonPath("$.sellerId").value(CoreMatchers.equalTo("yujin")))
-            .andExpect(jsonPath("$.status").value(CoreMatchers.equalTo("ACTIVE")))
             .andExpect(jsonPath("$.id").value(CoreMatchers.notNullValue()))
             .andExpect(jsonPath("$.createdAt").value(CoreMatchers.notNullValue()))
             .andExpect(jsonPath("$.modifiedAt").value(CoreMatchers.notNullValue()))
@@ -68,8 +71,13 @@ class MarketControllerTest {
         Assertions.assertThat(marketName.length()).isEqualTo(200);
         Assertions.assertThat(url.length()).isEqualTo(100);
 
-        Market market = Market.of(sellerId, marketName, url);
-        String json = objectMapper.writeValueAsString(market);
+        MarketDto.CreateRequest createMarketRequest = MarketDto.CreateRequest.builder()
+            .sellerId(sellerId)
+            .name(marketName)
+            .url(url)
+            .build();
+
+        String json = objectMapper.writeValueAsString(createMarketRequest);
 
         mockMvc.perform(post("/markets")
                 .content(json)
@@ -105,8 +113,13 @@ class MarketControllerTest {
         Assertions.assertThat(marketName.length()).isEqualTo(201);
         Assertions.assertThat(url.length()).isEqualTo(101);
 
-        Market market = Market.of(sellerId, marketName, url);
-        String json = objectMapper.writeValueAsString(market);
+        MarketDto.CreateRequest createMarketRequest = MarketDto.CreateRequest.builder()
+            .sellerId(sellerId)
+            .name(marketName)
+            .url(url)
+            .build();
+
+        String json = objectMapper.writeValueAsString(createMarketRequest);
 
         mockMvc.perform(post("/markets")
                 .content(json)
@@ -126,7 +139,13 @@ class MarketControllerTest {
         String url2 = "include blank";
         String url3 = "url!!";
 
-        String json = objectMapper.writeValueAsString(Market.of(sellerId, marketName, url1));
+        String json = objectMapper.writeValueAsString(
+            MarketDto.CreateRequest.builder()
+                .sellerId(sellerId)
+                .name(marketName)
+                .url(url1)
+                .build()
+        );
         mockMvc.perform(post("/markets")
                 .content(json)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -136,7 +155,13 @@ class MarketControllerTest {
             .andExpect(jsonPath("$.message").exists())
         ;
 
-        json = objectMapper.writeValueAsString(Market.of(sellerId, marketName, url2));
+        json = objectMapper.writeValueAsString(
+            MarketDto.CreateRequest.builder()
+                .sellerId(sellerId)
+                .name(marketName)
+                .url(url2)
+                .build()
+        );
         mockMvc.perform(post("/markets")
                 .content(json)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -146,7 +171,13 @@ class MarketControllerTest {
             .andExpect(jsonPath("$.message").exists())
         ;
 
-        json = objectMapper.writeValueAsString(Market.of(sellerId, marketName, url3));
+        json = objectMapper.writeValueAsString(
+            MarketDto.CreateRequest.builder()
+                .sellerId(sellerId)
+                .name(marketName)
+                .url(url3)
+                .build()
+        );
         mockMvc.perform(post("/markets")
                 .content(json)
                 .contentType(MediaType.APPLICATION_JSON)
