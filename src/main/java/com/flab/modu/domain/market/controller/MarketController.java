@@ -26,7 +26,7 @@ public class MarketController {
             throw new MarketDataBindingException(bindingResult);
         }
 
-        Market market = marketService.createMarket(createMarketRequest.toEntity());
+        Market market = marketService.createMarket(createMarketRequest);
 
         return MarketDto.CreateResponse.builder().market(market).build();
     }
