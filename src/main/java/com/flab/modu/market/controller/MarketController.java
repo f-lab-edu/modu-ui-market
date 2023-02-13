@@ -1,7 +1,7 @@
-package com.flab.modu.domain.market.controller;
+package com.flab.modu.market.controller;
 
-import com.flab.modu.domain.market.domain.Market;
-import com.flab.modu.domain.market.service.MarketService;
+import com.flab.modu.market.domain.Market;
+import com.flab.modu.market.service.MarketService;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;

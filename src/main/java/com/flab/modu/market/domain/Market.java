@@ -1,4 +1,4 @@
-package com.flab.modu.domain.market.domain;
+package com.flab.modu.market.domain;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -13,9 +13,7 @@ import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;

@@ -1,4 +1,4 @@
-package com.flab.modu.domain.market.domain;
+package com.flab.modu.market.domain;
 
 public enum MarketStatus {
     ACTIVE, DISABLED;

@@ -1,7 +1,7 @@
-package com.flab.modu.domain.market.controller;
+package com.flab.modu.market.controller;
 
-import com.flab.modu.domain.market.domain.Market;
-import com.flab.modu.domain.market.domain.MarketStatus;
+import com.flab.modu.market.domain.Market;
+import com.flab.modu.market.domain.MarketStatus;
 import java.time.LocalDateTime;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;

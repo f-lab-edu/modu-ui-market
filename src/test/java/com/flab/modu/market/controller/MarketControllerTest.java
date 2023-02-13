@@ -1,4 +1,4 @@
-package com.flab.modu.domain.market.controller;
+package com.flab.modu.market.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
