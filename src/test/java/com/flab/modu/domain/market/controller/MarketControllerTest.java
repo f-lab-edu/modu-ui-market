@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.assertj.core.api.Assertions;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
@@ -57,15 +58,9 @@ class MarketControllerTest {
 
     @Test
     public void createMarketByMaximumLangthParams() throws Exception {
-        String sellerId = "01234567890123456789012345678901234567890123456789";
-        String marketName = "";
-        for (int i = 0; i < 200; i++) {
-            marketName += "일";
-        }
-        String url = "";
-        for (int i = 0; i < 10; i++) {
-            url += "ThisIsUrls";
-        }
+        String sellerId = RandomStringUtils.randomAlphabetic(50);
+        String marketName = RandomStringUtils.random(200,"가나다라마바사아자차카타파하");
+        String url = RandomStringUtils.randomAlphabetic(100);
 
         Assertions.assertThat(sellerId.length()).isEqualTo(50);
         Assertions.assertThat(marketName.length()).isEqualTo(200);
@@ -94,20 +89,9 @@ class MarketControllerTest {
 
     @Test
     public void failCreatingMarketByOverMaximumLangthParams() throws Exception {
-        String sellerId = "01234567890123456789012345678901234567890123456789";
-        sellerId += "1";
-
-        String marketName = "";
-        for (int i = 0; i < 200; i++) {
-            marketName += "일";
-        }
-        marketName += "1";
-
-        String url = "";
-        for (int i = 0; i < 10; i++) {
-            url += "ThisIsUrls";
-        }
-        url += "1";
+        String sellerId = RandomStringUtils.randomAlphabetic(51);
+        String marketName = RandomStringUtils.random(201,"가나다라마바사아자차카타파하");
+        String url = RandomStringUtils.randomAlphabetic(101);
 
         Assertions.assertThat(sellerId.length()).isEqualTo(51);
         Assertions.assertThat(marketName.length()).isEqualTo(201);
