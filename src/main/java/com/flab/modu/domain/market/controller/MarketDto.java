@@ -18,13 +18,13 @@ public class MarketDto {
 
         private String sellerId;
 
-        @NotBlank
-        @Length(min = 1, max = 200)
+        @NotBlank(message = "마켓명을 입력해주세요.")
+        @Length(min = 1, max = 200, message = "마켓명은 1자 이상 200자 이하로 입력해주세요.")
         private String name;
 
-        @NotBlank
-        @Length(min = 1, max = 100)
-        @Pattern(regexp = "^[a-zA-Z]*$", message = "주소는 영어대소문자만 입력할 수 있습니다.")
+        @NotBlank(message = "주소를 입력해주세요.")
+        @Length(min = 1, max = 100, message = "주소는 1글자 이상 100자 이하로 입력해주세요.")
+        @Pattern(regexp = "^[a-zA-Z]*$", message = "주소는 영어대소문자만 입력해주세요.")
         private String url;
 
         @Builder
