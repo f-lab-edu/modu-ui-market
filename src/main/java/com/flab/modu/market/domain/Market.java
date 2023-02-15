@@ -63,6 +63,12 @@ public class Market {
         this.status = status;
     }
 
+    public void updateMarket(String name, String url, MarketStatus status){
+        this.name = name;
+        this.url = url;
+        this.status = status;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
