@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
 @RestControllerAdvice
-public class ExceptionController {
+public class GlobalExceptionController {
 
     @ExceptionHandler(DuplicatedEmailException.class)
     public final ResponseEntity<String> handleDuplicatedEmailException(
