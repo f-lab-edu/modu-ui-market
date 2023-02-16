@@ -1,5 +1,13 @@
 package com.flab.modu.market.controller;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.refEq;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -7,22 +15,37 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.flab.modu.market.controller.MarketDto.CreateResponse;
+import com.flab.modu.market.domain.Market;
+import com.flab.modu.market.domain.MarketStatus;
+import com.flab.modu.market.service.MarketService;
+import java.time.LocalDateTime;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.assertj.core.api.Assertions;
 import org.hamcrest.CoreMatchers;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
+@DisplayName("Market Controller 테스트")
 @ExtendWith(SpringExtension.class)
-@SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureRestDocs
+@WebMvcTest(MarketController.class)
 class MarketControllerTest {
+
+    @MockBean
+    private MarketService marketService;
 
     @Autowired
     private MockMvc mockMvc;
@@ -31,144 +54,139 @@ class MarketControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
-    public void createMarket() throws Exception {
-        MarketDto.CreateRequest createMarketRequest = MarketDto.CreateRequest.builder()
-            .sellerId("yujin")
-            .name("Yujin's Market")
-            .url("yujinMarket")
-            .build();
+    @DisplayName("마켓 생성에 성공한다.")
+    public void givenValidData_whenCreatingMarket_then200OK() throws Exception {
+        //given
+        MarketDto.CreateRequest createRequest = createMarketCreateRequest("sellerId","MarketUrl","Market Name");
+        MarketDto.CreateResponse createResponse = createMarketCreateResponse(createRequest);
+        given(marketService.createMarket(any(MarketDto.CreateRequest.class))).willReturn(
+            createResponse);
 
-        String json = objectMapper.writeValueAsString(createMarketRequest);
+        //when
+        ResultActions result = mockMvc.perform(post("/markets")
+            .content(objectMapper.writeValueAsString(createRequest))
+            .contentType(MediaType.APPLICATION_JSON)
+        );
 
-        mockMvc.perform(post("/markets")
-                .content(json)
-                .contentType(MediaType.APPLICATION_JSON)
-            )
-            .andDo(print())
+        //then
+        result.andDo(print())
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.name").value(CoreMatchers.equalTo("Yujin's Market")))
-            .andExpect(jsonPath("$.url").value(CoreMatchers.equalTo("yujinMarket")))
-            .andExpect(jsonPath("$.sellerId").value(CoreMatchers.equalTo("yujin")))
-            .andExpect(jsonPath("$.id").value(CoreMatchers.notNullValue()))
-            .andExpect(jsonPath("$.createdAt").value(CoreMatchers.notNullValue()))
-            .andExpect(jsonPath("$.modifiedAt").value(CoreMatchers.notNullValue()))
-        ;
+            .andExpect(jsonPath("$.name").value(CoreMatchers.equalTo(createRequest.getName())))
+            .andExpect(jsonPath("$.url").value(CoreMatchers.equalTo(createRequest.getUrl())))
+            .andExpect(jsonPath("$.sellerId").value(CoreMatchers.equalTo(createRequest.getSellerId())));
+        then(marketService).should().createMarket(refEq(createRequest));
+
+        //document
+        result.andDo(document("create-market",
+            requestFields(
+                fieldWithPath("sellerId").type(JsonFieldType.STRING).description("판매자아이디"),
+                fieldWithPath("name").type(JsonFieldType.STRING).description("마켓명"),
+                fieldWithPath("url").type(JsonFieldType.STRING).description("마켓주소")
+            ),
+            responseFields(
+                fieldWithPath("id").type(JsonFieldType.NUMBER).description("마켓아이디"),
+                fieldWithPath("sellerId").type(JsonFieldType.STRING).description("판매자아이디"),
+                fieldWithPath("name").type(JsonFieldType.STRING).description("마켓명"),
+                fieldWithPath("url").type(JsonFieldType.STRING).description("마켓주소"),
+                fieldWithPath("createdAt").type(JsonFieldType.STRING).description("생성일시"),
+                fieldWithPath("modifiedAt").type(JsonFieldType.STRING).description("수정일시")
+            )
+        ));
     }
 
     @Test
-    public void createMarketByMaximumLangthParams() throws Exception {
+    @DisplayName("입력값 최대 길이로 마켓 생성에 성공한다.")
+    public void givenMaximumLengthData_whenCreatingMarket_then200OK() throws Exception {
+        //given
         String sellerId = RandomStringUtils.randomAlphabetic(50);
-        String marketName = RandomStringUtils.random(200,"가나다라마바사아자차카타파하");
+        String marketName = RandomStringUtils.random(200, "가나다라마바사아자차카타파하");
         String url = RandomStringUtils.randomAlphabetic(100);
 
         Assertions.assertThat(sellerId.length()).isEqualTo(50);
         Assertions.assertThat(marketName.length()).isEqualTo(200);
         Assertions.assertThat(url.length()).isEqualTo(100);
 
-        MarketDto.CreateRequest createMarketRequest = MarketDto.CreateRequest.builder()
-            .sellerId(sellerId)
-            .name(marketName)
-            .url(url)
-            .build();
+        MarketDto.CreateRequest createRequest = createMarketCreateRequest(sellerId, url, marketName);
+        MarketDto.CreateResponse createResponse = createMarketCreateResponse(createRequest);
+        given(marketService.createMarket(any(MarketDto.CreateRequest.class))).willReturn(
+            createResponse);
 
-        String json = objectMapper.writeValueAsString(createMarketRequest);
+        //when
+        ResultActions result = mockMvc.perform(post("/markets")
+            .content(objectMapper.writeValueAsString(createRequest))
+            .contentType(MediaType.APPLICATION_JSON)
+        );
 
-        mockMvc.perform(post("/markets")
-                .content(json)
-                .contentType(MediaType.APPLICATION_JSON)
-            )
-            .andDo(print())
+        //when
+        result.andDo(print())
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.id").value(CoreMatchers.notNullValue()))
-            .andExpect(jsonPath("$.createdAt").value(CoreMatchers.notNullValue()))
-            .andExpect(jsonPath("$.modifiedAt").value(CoreMatchers.notNullValue()))
-        ;
+            .andExpect(jsonPath("$.name").exists())
+            .andExpect(jsonPath("$.url").exists())
+            .andExpect(jsonPath("$.sellerId").exists());
+        then(marketService).should().createMarket(refEq(createRequest));
     }
 
     @Test
-    public void failCreatingMarketByOverMaximumLangthParams() throws Exception {
+    @DisplayName("입력값 길이 초과로 마켓 생성에 실패한다.")
+    public void givenInvalidLengthData_whenCreatingMarket_then400BadRequestWithMessage()
+        throws Exception {
+        //given
         String sellerId = RandomStringUtils.randomAlphabetic(51);
-        String marketName = RandomStringUtils.random(201,"가나다라마바사아자차카타파하");
+        String marketName = RandomStringUtils.random(201, "가나다라마바사아자차카타파하");
         String url = RandomStringUtils.randomAlphabetic(101);
 
-        Assertions.assertThat(sellerId.length()).isEqualTo(51);
-        Assertions.assertThat(marketName.length()).isEqualTo(201);
-        Assertions.assertThat(url.length()).isEqualTo(101);
+        MarketDto.CreateRequest createMarketRequest = createMarketCreateRequest(sellerId, url, marketName);
 
-        MarketDto.CreateRequest createMarketRequest = MarketDto.CreateRequest.builder()
-            .sellerId(sellerId)
-            .name(marketName)
-            .url(url)
-            .build();
+        //when
+        ResultActions result = mockMvc.perform(post("/markets")
+            .content(objectMapper.writeValueAsString(createMarketRequest))
+            .contentType(MediaType.APPLICATION_JSON)
+        );
 
-        String json = objectMapper.writeValueAsString(createMarketRequest);
-
-        mockMvc.perform(post("/markets")
-                .content(json)
-                .contentType(MediaType.APPLICATION_JSON)
-            )
-            .andDo(print())
+        //then
+        result.andDo(print())
             .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.message").exists())
-        ;
+            .andExpect(jsonPath("$.message").exists());
+        then(marketService).shouldHaveNoInteractions();
     }
 
-    @Test
-    public void failCreatingMarketByWrongParams() throws Exception {
-        String sellerId = "yujin";
-        String marketName = "이름은 아무거나";
-        String url1 = "한글입력";
-        String url2 = "include blank";
-        String url3 = "url!!";
+    @ParameterizedTest
+    @ValueSource(strings = {"한글입력", "include blank", "url!!"})
+    @DisplayName("잘못된 형식의 URL로 마켓 생성 실패한다.")
+    public void givenInvalidUrl_whenCreatingMarket_then400BadRequestWithMessage(String invalidUrl) throws Exception {
+        //given
+        MarketDto.CreateRequest createRequest = createMarketCreateRequest("sellerId", invalidUrl, "마켓명");
 
-        String json = objectMapper.writeValueAsString(
-            MarketDto.CreateRequest.builder()
-                .sellerId(sellerId)
-                .name(marketName)
-                .url(url1)
-                .build()
+        //when
+        ResultActions result = mockMvc.perform(post("/markets")
+            .content(objectMapper.writeValueAsString(createRequest))
+            .contentType(MediaType.APPLICATION_JSON)
         );
-        mockMvc.perform(post("/markets")
-                .content(json)
-                .contentType(MediaType.APPLICATION_JSON)
-            )
-            .andDo(print())
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.message").exists())
-        ;
 
-        json = objectMapper.writeValueAsString(
-            MarketDto.CreateRequest.builder()
-                .sellerId(sellerId)
-                .name(marketName)
-                .url(url2)
-                .build()
-        );
-        mockMvc.perform(post("/markets")
-                .content(json)
-                .contentType(MediaType.APPLICATION_JSON)
-            )
-            .andDo(print())
+        //then
+        result.andDo(print())
             .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.message").exists())
-        ;
+            .andExpect(jsonPath("$.message").exists());
+        then(marketService).shouldHaveNoInteractions();
+    }
 
-        json = objectMapper.writeValueAsString(
-            MarketDto.CreateRequest.builder()
-                .sellerId(sellerId)
-                .name(marketName)
-                .url(url3)
-                .build()
-        );
-        mockMvc.perform(post("/markets")
-                .content(json)
-                .contentType(MediaType.APPLICATION_JSON)
-            )
-            .andDo(print())
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.message").exists())
-        ;
+    private MarketDto.CreateRequest createMarketCreateRequest(String sellerId, String url, String name) {
+        return MarketDto.CreateRequest.builder()
+            .sellerId(sellerId)
+            .name(name)
+            .url(url)
+            .build();
+    }
+
+    private CreateResponse createMarketCreateResponse(MarketDto.CreateRequest createRequest) {
+        MarketDto.CreateResponse createResponse = MarketDto.CreateResponse.builder()
+            .market(createRequest.toEntity())
+            .build();
+        createResponse.setId(1L);
+        createResponse.setCreatedAt(LocalDateTime.now());
+        createResponse.setModifiedAt(LocalDateTime.now());
+        return createResponse;
     }
 }

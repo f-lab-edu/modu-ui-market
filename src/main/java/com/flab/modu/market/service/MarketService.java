@@ -13,12 +13,13 @@ public class MarketService {
 
     private final MarketRepository marketRepository;
 
-    public Market createMarket(MarketDto.CreateRequest createMarketRequest) {
+    public MarketDto.CreateResponse createMarket(MarketDto.CreateRequest createMarketRequest) {
         if (checkUrlDuplicate(createMarketRequest.getUrl())) {
             throw new DuplicatedUrlException();
         }
 
-        return marketRepository.save(createMarketRequest.toEntity());
+        Market savedMarket = marketRepository.save(createMarketRequest.toEntity());
+        return MarketDto.CreateResponse.builder().market(savedMarket).build();
     }
 
     private boolean checkUrlDuplicate(String url) {
