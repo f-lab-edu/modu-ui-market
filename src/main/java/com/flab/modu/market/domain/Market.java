@@ -11,8 +11,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -20,6 +22,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
 @ToString
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 @Entity
 public class Market {
@@ -29,11 +32,9 @@ public class Market {
     private Long id;
 
     @Column(nullable = false, length = 50)
-    @NotNull
     private String sellerId;
 
     @Column(nullable = false, length = 200)
-    @NotNull
     private String name;
 
     @Column(nullable = false)
@@ -41,7 +42,6 @@ public class Market {
     private MarketStatus status;
 
     @Column(nullable = false, length = 100)
-    @NotNull
     private String url;
 
     @CreatedDate
@@ -51,9 +51,6 @@ public class Market {
     @LastModifiedDate
     @Column(nullable = false)
     private LocalDateTime modifiedAt;
-
-    public Market() {
-    }
 
     @Builder
     public Market(String sellerId, String name, String url, MarketStatus status) {
