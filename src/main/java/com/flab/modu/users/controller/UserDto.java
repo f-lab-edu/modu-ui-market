@@ -2,6 +2,7 @@ package com.flab.modu.users.controller;
 
 import com.flab.modu.users.domain.common.UserRole;
 import com.flab.modu.users.domain.entity.User;
+import com.flab.modu.users.encoder.PasswordEncoder;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
@@ -49,6 +50,34 @@ public class UserDto {
                 .role(UserRole.BUYER)
                 .phoneNumber(phoneNumber)
                 .build();
+        }
+
+        public void encryptPassword(PasswordEncoder passwordEncoder) {
+            String encryption = passwordEncoder.encrypt(this.password);
+            this.password = encryption;
+        }
+    }
+
+    @Getter
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class LoginRequest {
+        @NotBlank(message = "이메일 주소를 입력해주세요.")
+        @Email(message = "올바른 이메일 주소를 입력해주세요.")
+        private String email;
+
+        @NotBlank(message = "비밀번호를 입력해주세요.")
+        @Size(min = 8, max = 20, message = "비밀번호는 8자 이상 20자 이하로 입력해주세요.")
+        private String password;
+
+        @Builder
+        public LoginRequest(String email, String password) {
+            this.email = email;
+            this.password = password;
+        }
+
+        public void encryptPassword(PasswordEncoder passwordEncoder) {
+            String encryption = passwordEncoder.encrypt(this.password);
+            this.password = encryption;
         }
     }
 }
