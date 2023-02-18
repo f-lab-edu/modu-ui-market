@@ -21,7 +21,6 @@ public class PasswordEncoder {
 
             byte[] hash = factory.generateSecret(spec).getEncoded();
             String encode = Base64.getEncoder().encodeToString(hash);
-            System.out.println("encode = " + encode);
             return encode;
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
