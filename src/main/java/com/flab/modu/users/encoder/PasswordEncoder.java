@@ -1,6 +1,8 @@
 package com.flab.modu.users.encoder;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
@@ -14,25 +16,23 @@ public class PasswordEncoder {
 
     public String encrypt(String password) {
         try {
-            byte[] salt = getSalt(password);
-
-            KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 65536, 128);
+            KeySpec spec = new PBEKeySpec(password.toCharArray(), getSalt(password), 65536, 128);
             SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
 
             byte[] hash = factory.generateSecret(spec).getEncoded();
-            String encode = Base64.getEncoder().encodeToString(hash);
-            return encode;
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        } catch (InvalidKeySpecException e) {
+            return Base64.getEncoder().encodeToString(hash);
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException |
+                 InvalidKeySpecException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private byte[] getSalt(String password) {
-        String substring = password.substring(0, 8);
-        StringBuilder sb = new StringBuilder();
-        String saltString = sb.append(substring).append(substring).toString();
-        return saltString.getBytes(StandardCharsets.UTF_8);
+    private byte[] getSalt(String password)
+        throws NoSuchAlgorithmException, UnsupportedEncodingException {
+
+        MessageDigest digest = MessageDigest.getInstance("SHA-512");
+        byte[] keyBytes = password.getBytes("UTF-8");
+
+        return digest.digest(keyBytes);
     }
 }
