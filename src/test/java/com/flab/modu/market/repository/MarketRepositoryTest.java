@@ -2,7 +2,7 @@ package com.flab.modu.market.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.flab.modu.global.config.JPAConfig;
+import com.flab.modu.global.config.JpaConfig;
 import com.flab.modu.market.domain.Market;
 import com.flab.modu.market.domain.MarketStatus;
 import java.util.List;
@@ -14,7 +14,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
 @DisplayName("Market JPA 연결 테스트")
-@Import(value = JPAConfig.class)
+@Import(value = JpaConfig.class)
 @DataJpaTest
 public class MarketRepositoryTest {
 
