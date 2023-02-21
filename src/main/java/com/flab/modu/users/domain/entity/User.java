@@ -1,7 +1,7 @@
 package com.flab.modu.users.domain.entity;
 
+import com.flab.modu.global.domain.BaseTimeEntity;
 import com.flab.modu.users.domain.common.UserRole;
-import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "users")
-public class User {
+public class User extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -37,10 +37,6 @@ public class User {
     private UserRole role;
 
     private String phoneNumber;
-
-    private LocalDateTime createdAt;
-
-    private LocalDateTime modifiedAt;
 
     @Builder
     public User(Long id, String email, String name, String password, UserRole role, String phoneNumber) {

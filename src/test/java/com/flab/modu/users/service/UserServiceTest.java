@@ -9,6 +9,7 @@ import static org.mockito.BDDMockito.then;
 import com.flab.modu.users.controller.UserDto;
 import com.flab.modu.users.domain.common.UserRole;
 import com.flab.modu.users.domain.entity.User;
+import com.flab.modu.users.encoder.PasswordEncoder;
 import com.flab.modu.users.exception.DuplicatedEmailException;
 import com.flab.modu.users.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -23,6 +24,9 @@ class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    PasswordEncoder passwordEncoder;
 
     @InjectMocks
     private UserService userService;
