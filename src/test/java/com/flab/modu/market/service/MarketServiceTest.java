@@ -32,11 +32,13 @@ class MarketServiceTest {
     @DisplayName("정상적으로 마켓생성에 성공한다.")
     public void givenTestData_whenCreatingMarket_thenSuccess() {
         // given
+        String sellerId = "sellerId";
         MarketDto.CreateRequest createRequest = createMarketDto();
-        given(marketRepository.save(any(Market.class))).willReturn(createRequest.toEntity());
+        given(marketRepository.save(any(Market.class))).willReturn(
+            createRequest.toEntity(sellerId));
 
         // when
-        marketService.createMarket(createRequest);
+        marketService.createMarket(createRequest, sellerId);
 
         // then
         then(marketRepository).should().existsByUrl(anyString());
@@ -47,12 +49,14 @@ class MarketServiceTest {
     @DisplayName("마켓주소 중복으로 마켓생성에 실패한다.")
     public void givenDuplicatedUrl_whenCreatingMarket_thenFailure() {
         // given
+        String sellerId = "sellerId";
         MarketDto.CreateRequest createRequest = createMarketDto();
         String existingUrl = "MarketUrl";
         given(marketRepository.existsByUrl(existingUrl)).willReturn(true);
 
         // when
-        assertThrows(DuplicatedUrlException.class, () -> marketService.createMarket(createRequest));
+        assertThrows(DuplicatedUrlException.class,
+            () -> marketService.createMarket(createRequest, sellerId));
 
         // then
         then(marketRepository).should().existsByUrl(existingUrl);
@@ -61,7 +65,6 @@ class MarketServiceTest {
 
     private CreateRequest createMarketDto() {
         return MarketDto.CreateRequest.builder()
-            .sellerId("sellerId")
             .url("MarketUrl")
             .name("마켓명")
             .build();

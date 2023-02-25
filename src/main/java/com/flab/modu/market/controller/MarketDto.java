@@ -16,9 +16,6 @@ public class MarketDto {
     @Getter
     @NoArgsConstructor
     public static class CreateRequest {
-
-        private String sellerId;
-
         @NotBlank(message = "마켓명을 입력해주세요.")
         @Length(min = 1, max = 200, message = "마켓명은 1자 이상 200자 이하로 입력해주세요.")
         private String name;
@@ -29,13 +26,12 @@ public class MarketDto {
         private String url;
 
         @Builder
-        public CreateRequest(String sellerId, String name, String url) {
-            this.sellerId = sellerId;
+        public CreateRequest(String name, String url) {
             this.name = name;
             this.url = url;
         }
 
-        public Market toEntity() {
+        public Market toEntity(String sellerId) {
             return Market.builder()
                 .sellerId(sellerId)
                 .name(name)
