@@ -1,4 +1,4 @@
-def mainBranch = false
+echo "---build start---"
 
 pipeline {
   agent any
@@ -14,6 +14,7 @@ pipeline {
 
     stage('Test') {
       steps {
+        sh 'chmod +x gradlew'
         sh './gradlew test'
         echo 'test success'
       }
