@@ -1,30 +1,25 @@
 echo "---build start---"
 
-pipeline {
-  agent any
-
-  stages {
-
-    stage('Git Checkout') {
-      steps {
-        checkout scm
-        echo 'Git Checkout Success!'
-      }
+node {
+  stage('Git Checkout') {
+    steps {
+      checkout scm
+      echo 'Git Checkout Success!'
     }
+  }
 
-    stage('Test') {
-      steps {
-        sh 'chmod +x gradlew'
-        sh './gradlew test'
-        echo 'test success'
-      }
+  stage('Test') {
+    steps {
+      sh 'chmod +x gradlew'
+      sh './gradlew test'
+      echo 'test success'
     }
+  }
 
-    stage('Build') {
-      steps {
-        sh './gradlew clean build -x test'
-        echo 'build success'
-      }
+  stage('Build') {
+    steps {
+      sh './gradlew clean build -x test'
+      echo 'build success'
     }
   }
 }
