@@ -22,7 +22,7 @@ pipeline {
 
     stage('Build') {
       steps {
-        sh 'gradle clean build --exclude-task test'
+        sh './gradlew clean build -x test'
         echo 'build success'
       }
     }
