@@ -26,6 +26,9 @@ pipeline {
     }
 
     stage('Deploy') {
+      when {
+          branch 'develop'
+      }
       steps {
         sshagent(credentials: ['deploy_server_ssh_key']) {
           sh "ssh -o StrictHostKeyChecking=no moma@${env.DEPLOY_HOST} -p ${env.DEPLOY_PORT} uptime"
