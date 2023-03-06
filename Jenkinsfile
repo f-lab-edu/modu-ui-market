@@ -20,9 +20,9 @@ pipeline {
 
     stage('Parameter Setting') {
       steps {
-        sed -i "s%\${DB_URL}%${env.DB_URL}%g" ${WORKSPACE}/src/main/resources/application.yml
-        sed -i "s%\${DB_USERNAME}%${env.DB_USERNAME}%g" ${WORKSPACE}/src/main/resources/application.yml
-        sed -i "s%\${DB_PASSWORD}%${env.DB_PASSWORD}%g" ${WORKSPACE}/src/main/resources/application.yml
+        sed -i 's%\${DB_URL}%${env.DB_URL}%g' ${WORKSPACE}/src/main/resources/application.yml
+        sed -i 's%\${DB_USERNAME}%${env.DB_USERNAME}%g' ${WORKSPACE}/src/main/resources/application.yml
+        sed -i 's%\${DB_PASSWORD}%${env.DB_PASSWORD}%g' ${WORKSPACE}/src/main/resources/application.yml
       }
     }
 
