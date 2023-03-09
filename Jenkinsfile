@@ -26,8 +26,10 @@ pipeline {
     }
 
     stage('Deploy') {
-      when {
-          branch 'develop'
+      when{
+        expression {
+          return params.PR_STATUS == 'closed' && params.MERGED == true
+        }
       }
       steps {
         sshagent(credentials: ['deploy_server_ssh_key']) {
@@ -39,4 +41,27 @@ pipeline {
       }
     }
   }
+  post {
+    when{
+      expression {
+        return params.PR_STATUS == 'opened' || params.PR_STATUS == 'reopened'
+      }
+    }
+    success {
+      setBuildStatus("Build succeeded", "SUCCESS");
+    }
+    failure {
+      setBuildStatus("Build failed", "FAILURE");
+    }
+  }
+}
+
+void setBuildStatus(String message, String state){
+  step([
+    $class: "GitHubCommitStatusSetter",
+    reposSource: [$class: "ManuallyEnteredRepositorySource", url: "https://github.com/f-lab-edu/modu-ui-market"],
+    contextSource: [$class: "ManuallyEnteredCommitContextSource", context: "ci/jenkins/modu-ui-market/build-status"],
+    errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result:"UNSTABLE"]],
+    statusResultSource: [$class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]]]
+  ]);
 }
