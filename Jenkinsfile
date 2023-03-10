@@ -40,11 +40,6 @@ pipeline {
     }
   }
   post {
-    when{
-      expression {
-        return env.BRANCH_NAME.contains('feature/')
-      }
-    }
     success {
       setBuildStatus("Build succeeded", "SUCCESS");
     }
