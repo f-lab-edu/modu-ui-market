@@ -27,9 +27,7 @@ pipeline {
 
     stage('Deploy') {
       when{
-        expression {
-          return params.PR_STATUS == 'closed' && params.MERGED == true
-        }
+        branch 'develop'
       }
       steps {
         sshagent(credentials: ['deploy_server_ssh_key']) {
@@ -44,7 +42,7 @@ pipeline {
   post {
     when{
       expression {
-        return params.PR_STATUS == 'opened' || params.PR_STATUS == 'reopened'
+        return env.BRANCH_NAME.contains('feature/')
       }
     }
     success {
