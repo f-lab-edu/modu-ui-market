@@ -13,24 +13,14 @@ pipeline {
     stage('Test') {
       steps {
         sh 'chmod +x gradlew'
-        withEnv([
-            "DB_USERNAME=${env.DB_USERNAME}",
-            "DB_PASSWORD=${env.DB_PASSWORD}",
-            "DB_URL=${env.DB_URL}"
-        ]) {
-            echo "DB_USERNAME: ${DB_USERNAME}"
-            echo "DB_PASSWORD: ${DB_PASSWORD}"
-            echo "DB_URL: ${DB_URL}"
-            sh './gradlew test'
-
-        }
+        sh './gradlew test -Dspring.profiles.active=test'
         echo 'test success'
       }
     }
 
     stage('Build') {
       steps {
-        sh './gradlew clean build -x test -Pspring.profiles.active=product'
+        sh './gradlew clean build -x test'
         echo 'build success'
       }
     }
