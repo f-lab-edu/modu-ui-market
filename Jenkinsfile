@@ -22,6 +22,7 @@ pipeline {
             echo "DB_PASSWORD: ${DB_PASSWORD}"
             echo "DB_URL: ${DB_URL}"
             sh './gradlew test'
+            
         }
         echo 'test success'
       }
