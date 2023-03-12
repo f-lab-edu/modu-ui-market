@@ -8,4 +8,4 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
-      show-sql: true
+    show-sql: true

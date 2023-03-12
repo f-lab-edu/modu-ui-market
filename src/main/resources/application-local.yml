@@ -7,3 +7,10 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
+    properties:
+      hibernate.format_sql: true
+    show-sql: true
+logging:
+  level:
+    com.flab.modu: debug
+    org.springframework.jdbc: DEBUG
