@@ -13,7 +13,13 @@ pipeline {
     stage('Test') {
       steps {
         sh 'chmod +x gradlew'
-        sh './gradlew test'
+        withEnv([
+            'DB_USERNAME=${env.DB_USERNAME}',
+            'DB_PASSWORD=${env.DB_PASSWORD}',
+            'DB_URL=${env.DB_URL}'
+        ]) {
+            sh './gradlew test'
+        }
         echo 'test success'
       }
     }
