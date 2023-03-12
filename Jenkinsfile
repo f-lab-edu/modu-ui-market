@@ -14,15 +14,15 @@ pipeline {
       steps {
         sh 'chmod +x gradlew'
         withEnv([
-            'DB_USERNAME=${env.DB_USERNAME}',
-            'DB_PASSWORD=${env.DB_PASSWORD}',
-            'DB_URL=${env.DB_URL}'
+            "DB_USERNAME=${env.DB_USERNAME}",
+            "DB_PASSWORD=${env.DB_PASSWORD}",
+            "DB_URL=${env.DB_URL}"
         ]) {
             echo "DB_USERNAME: ${DB_USERNAME}"
             echo "DB_PASSWORD: ${DB_PASSWORD}"
             echo "DB_URL: ${DB_URL}"
             sh './gradlew test'
-            
+
         }
         echo 'test success'
       }
