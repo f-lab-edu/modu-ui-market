@@ -13,7 +13,7 @@ pipeline {
     stage('Test') {
       steps {
         sh 'chmod +x gradlew'
-        sh 'SPRING_PROFILES_ACTIVE=test ./gradlew test'
+        sh './gradlew test'
         echo 'test success'
       }
     }
