@@ -1,5 +1,6 @@
 package com.flab.modu.market.domain;
 
+import com.flab.modu.global.domain.BaseTimeEntity;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Column;
@@ -23,9 +24,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Getter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EntityListeners(AuditingEntityListener.class)
 @Entity
-public class Market {
+public class Market extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,14 +43,6 @@ public class Market {
 
     @Column(nullable = false, length = 100)
     private String url;
-
-    @CreatedDate
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    @Column(nullable = false)
-    private LocalDateTime modifiedAt;
 
     @Builder
     public Market(String sellerId, String name, String url, MarketStatus status) {
