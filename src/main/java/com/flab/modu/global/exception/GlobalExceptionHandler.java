@@ -31,17 +31,17 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({MarketNotFoundException.class})
-    public ResponseEntity<String> handleMarketNotFoundException(MarketNotFoundException e) {
+    public ResponseEntity<Object> handleMarketNotFoundException(MarketNotFoundException e) {
         return ApiResponse.MARKET_NOT_FOUND;
     }
 
     @ExceptionHandler({MarketNoPermissionException.class})
-    public ResponseEntity<String> handleMarketNoPermissionException(MarketNoPermissionException e) {
+    public ResponseEntity<Object> handleMarketNoPermissionException(MarketNoPermissionException e) {
         return ApiResponse.MARKET_NO_PERMISSION;
     }
 
     @ExceptionHandler({WrongImageDataException.class})
-    public ResponseEntity<String> handleWrongImageDataException(WrongImageDataException e) {
+    public ResponseEntity<Object> handleWrongImageDataException(WrongImageDataException e) {
         return ApiResponse.WRONG_IMAGE_DATA;
     }
 }

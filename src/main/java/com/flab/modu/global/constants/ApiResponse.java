@@ -1,20 +1,20 @@
 package com.flab.modu.global.constants;
 
-import com.flab.modu.global.response.ResponseBuilder;
+import com.flab.modu.global.response.ErrorResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 public class ApiResponse {
 
-    public static final ResponseEntity<String> MARKET_NOT_FOUND =
-        new ResponseEntity<String>(ResponseBuilder.getErrorJsonString("잘못된 마켓정보입니다."),
+    public static final ResponseEntity<Object> MARKET_NOT_FOUND =
+        new ResponseEntity<Object>(new ErrorResponseDto("잘못된 마켓정보입니다."),
             HttpStatus.BAD_REQUEST);
 
-    public static final ResponseEntity<String> MARKET_NO_PERMISSION =
-        new ResponseEntity<String>(ResponseBuilder.getErrorJsonString("잘못된 마켓정보입니다."),
+    public static final ResponseEntity<Object> MARKET_NO_PERMISSION =
+        new ResponseEntity<Object>(new ErrorResponseDto("잘못된 마켓정보입니다."),
             HttpStatus.BAD_REQUEST);
 
-    public static final ResponseEntity<String> WRONG_IMAGE_DATA =
-        new ResponseEntity<String>(ResponseBuilder.getErrorJsonString("잘못된 이미지정보입니다."),
+    public static final ResponseEntity<Object> WRONG_IMAGE_DATA =
+        new ResponseEntity<Object>(new ErrorResponseDto("잘못된 이미지정보입니다."),
             HttpStatus.BAD_REQUEST);
 }
