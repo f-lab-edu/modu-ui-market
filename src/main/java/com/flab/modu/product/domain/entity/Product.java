@@ -7,6 +7,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
@@ -23,6 +25,7 @@ import lombok.ToString;
 public class Product extends BaseTimeEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(optional = false)
@@ -48,6 +51,14 @@ public class Product extends BaseTimeEntity {
     public Product(Market market, String name, Integer stock, Integer price, byte[] image,
         ProductStatus status) {
         this.market = market;
+        this.name = name;
+        this.stock = stock;
+        this.price = price;
+        this.image = image;
+        this.status = status;
+    }
+
+    public void update(String name, Integer stock, Integer price, byte[] image, ProductStatus status){
         this.name = name;
         this.stock = stock;
         this.price = price;
