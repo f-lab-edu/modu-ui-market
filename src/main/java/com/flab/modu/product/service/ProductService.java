@@ -8,6 +8,7 @@ import com.flab.modu.product.controller.ProductDto;
 import com.flab.modu.product.domain.entity.Product;
 import com.flab.modu.product.exception.WrongImageDataException;
 import com.flab.modu.product.repository.ProductRepository;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,8 +43,12 @@ public class ProductService {
 
     private byte[] getImageBinary(MultipartFile imageMultipartFile) {
         try {
-            return imageMultipartFile.getBytes();
-        } catch (Exception e) {
+            if( imageMultipartFile == null ){
+                return null;
+            }else{
+                return imageMultipartFile.getBytes();
+            }
+        } catch (IOException e) {
             throw new WrongImageDataException();
         }
     }
