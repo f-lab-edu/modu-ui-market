@@ -22,12 +22,15 @@ import com.flab.modu.product.service.ProductService;
 import com.flab.modu.users.domain.common.UserConstant;
 import com.flab.modu.users.service.LoginService;
 import java.io.IOException;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -94,6 +97,7 @@ class ProductControllerTest {
             .file(new MockMultipartFile("product", "product", MediaType.APPLICATION_JSON_VALUE,
                 objectMapper.writeValueAsBytes(createRequest)))
             .session(session)
+            .accept(MediaType.APPLICATION_JSON)
         );
 
         //then
@@ -145,6 +149,68 @@ class ProductControllerTest {
                 fieldWithPath("image").type(JsonFieldType.STRING).description("이미지바이너리")
             )
         ));
+    }
+
+    @Test
+    @DisplayName("이미지 정보가 없어도 상품 생성에 성공한다.")
+    public void givenNoImage_whenCreatingProduct_then200OK() throws Exception {
+        //given
+        MockMultipartFile multipartFile = createMultipartFile();
+        ProductDto.CreateRequest createRequest = createProductCreateRequest(1L, "상품1", 10000, 20,
+            ProductStatus.ACTIVE);
+        ProductDto.CreateResponse createResponse = createProductCreateResponse(createRequest,
+            null);
+        given(productService.createProduct(any(ProductDto.CreateRequest.class),
+            any(MultipartFile.class), any(String.class)))
+            .willReturn(createResponse);
+
+        //when
+        ResultActions result = mockMvc.perform(multipart("/products")
+            .file(multipartFile)
+            .file(new MockMultipartFile("product", "product", MediaType.APPLICATION_JSON_VALUE,
+                objectMapper.writeValueAsBytes(createRequest)))
+            .session(session)
+            .accept(MediaType.APPLICATION_JSON)
+        );
+
+        //then
+        result.andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.name").value(CoreMatchers.equalTo(createRequest.getName())))
+            .andExpect(jsonPath("$.price").value(CoreMatchers.equalTo(createRequest.getPrice())))
+            .andExpect(jsonPath("$.status").value(
+                CoreMatchers.equalTo(createRequest.getStatus().getCode())))
+            .andExpect(jsonPath("$.stock").value(CoreMatchers.equalTo(createRequest.getStock())))
+            .andExpect(jsonPath("$.market").value(CoreMatchers.notNullValue()));
+
+        then(productService).should().createProduct(refEq(createRequest),
+            refEq(multipartFile),
+            refEq((String) session.getAttribute(UserConstant.EMAIL)));
+    }
+
+    @Test
+    @DisplayName("필수 파라메터 marketId 누락으로 상품 생성에 실패한다.")
+    public void givenNoMarketIdParameter_whenCreatingProduct_then400BadRequest() throws Exception {
+        //given
+        ProductDto.CreateRequest createRequest = createProductCreateRequest(null, "상품1", 10000, 20,
+            ProductStatus.ACTIVE);
+
+        //when
+        ResultActions result = mockMvc.perform(multipart("/products")
+            .file(new MockMultipartFile("product", "product", MediaType.APPLICATION_JSON_VALUE,
+                objectMapper.writeValueAsBytes(createRequest)))
+            .session(session)
+            .accept(MediaType.APPLICATION_JSON)
+        );
+
+        //then
+        result.andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.message").value(CoreMatchers.notNullValue()));
+
+        then(productService).shouldHaveNoInteractions();
     }
 
     private ProductDto.CreateRequest createProductCreateRequest(Long marketId, String name,
