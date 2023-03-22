@@ -14,20 +14,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
-    public ResponseEntity<String> errorHandler(MethodArgumentNotValidException e) {
-
-        return ResponseEntity.badRequest().body(
-            "{\"message\":\"" + e.getBindingResult().getAllErrors().get(0).getDefaultMessage()
-                + "\"}"
-        );
+    public ResponseEntity<Object> errorHandler(MethodArgumentNotValidException e) {
+        return ApiResponse.buildResponseEntity(e.getAllErrors().get(0).getDefaultMessage());
     }
 
     @ExceptionHandler({DuplicatedUrlException.class})
-    public ResponseEntity<String> handleDuplicatedUrlException(DuplicatedUrlException e) {
-
-        return ResponseEntity.badRequest().body(
-            "{\"message\":\"중복된 마켓주소입니다.\"}"
-        );
+    public ResponseEntity<Object> handleDuplicatedUrlException(DuplicatedUrlException e) {
+        return ApiResponse.MARKET_URL_DUPLATED;
     }
 
     @ExceptionHandler({MarketNotFoundException.class})

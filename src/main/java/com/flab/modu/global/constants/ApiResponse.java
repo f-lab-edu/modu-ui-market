@@ -17,4 +17,12 @@ public class ApiResponse {
     public static final ResponseEntity<Object> WRONG_IMAGE_DATA =
         new ResponseEntity<Object>(new ErrorResponseDto("잘못된 이미지정보입니다."),
             HttpStatus.BAD_REQUEST);
+    public static final ResponseEntity<Object> MARKET_URL_DUPLATED =
+        new ResponseEntity<Object>(new ErrorResponseDto("중복된 마켓주소입니다."),
+            HttpStatus.BAD_REQUEST);
+
+    public static ResponseEntity<Object> buildResponseEntity(String message) {
+        return new ResponseEntity<Object>(new ErrorResponseDto(message),
+            HttpStatus.BAD_REQUEST);
+    }
 }
