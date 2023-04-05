@@ -16,21 +16,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flab.modu.market.domain.Market;
+import com.flab.modu.market.exception.MarketNoPermissionException;
+import com.flab.modu.market.exception.MarketNotFoundException;
 import com.flab.modu.product.domain.common.ProductStatus;
 import com.flab.modu.product.domain.entity.Product;
+import com.flab.modu.product.exception.WrongImageDataException;
 import com.flab.modu.product.service.ProductService;
 import com.flab.modu.users.domain.common.UserConstant;
 import com.flab.modu.users.service.LoginService;
 import java.io.IOException;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -211,6 +211,90 @@ class ProductControllerTest {
             .andExpect(jsonPath("$.message").value(CoreMatchers.notNullValue()));
 
         then(productService).shouldHaveNoInteractions();
+    }
+
+    @Test
+    @DisplayName("market 소유 권한 문제로 상품 생성에 실패한다.")
+    public void givenMarketNoPermission_whenCreatingProduct_then400BadRequest() throws Exception {
+        //given
+        ProductDto.CreateRequest createRequest = createProductCreateRequest(1L, "상품1", 10000, 20,
+            ProductStatus.ACTIVE);
+        given(productService.createProduct(any(ProductDto.CreateRequest.class),
+            nullable(MultipartFile.class), any(String.class)))
+            .willThrow(new MarketNoPermissionException());
+
+        //when
+        ResultActions result = mockMvc.perform(multipart("/products")
+            .file(new MockMultipartFile("product", "product", MediaType.APPLICATION_JSON_VALUE,
+                objectMapper.writeValueAsBytes(createRequest)))
+            .session(session)
+        );
+
+        //then
+        result.andDo(print())
+            .andExpect(status().isBadRequest());
+
+        then(productService).should().createProduct(refEq(createRequest),
+            refEq(null),
+            refEq((String) session.getAttribute(UserConstant.EMAIL)));
+
+        then(productService).shouldHaveNoMoreInteractions();
+    }
+
+    @Test
+    @DisplayName("존재하지않는 market정보로 상품 생성에 실패한다.")
+    public void givenMarketNotFound_whenCreatingProduct_then400BadRequest() throws Exception {
+        //given
+        ProductDto.CreateRequest createRequest = createProductCreateRequest(1L, "상품1", 10000, 20,
+            ProductStatus.ACTIVE);
+        given(productService.createProduct(any(ProductDto.CreateRequest.class),
+            nullable(MultipartFile.class), any(String.class)))
+            .willThrow(new MarketNotFoundException());
+
+        //when
+        ResultActions result = mockMvc.perform(multipart("/products")
+            .file(new MockMultipartFile("product", "product", MediaType.APPLICATION_JSON_VALUE,
+                objectMapper.writeValueAsBytes(createRequest)))
+            .session(session)
+        );
+
+        //then
+        result.andDo(print())
+            .andExpect(status().isBadRequest());
+
+        then(productService).should().createProduct(refEq(createRequest),
+            refEq(null),
+            refEq((String) session.getAttribute(UserConstant.EMAIL)));
+
+        then(productService).shouldHaveNoMoreInteractions();
+    }
+
+    @Test
+    @DisplayName("잘못된 이미지바이너리 정보로 상품 생성에 실패한다.")
+    public void givenWrongImageData_whenCreatingProduct_then400BadRequest() throws Exception {
+        //given
+        ProductDto.CreateRequest createRequest = createProductCreateRequest(1L, "상품1", 10000, 20,
+            ProductStatus.ACTIVE);
+        given(productService.createProduct(any(ProductDto.CreateRequest.class),
+            nullable(MultipartFile.class), any(String.class)))
+            .willThrow(new WrongImageDataException());
+
+        //when
+        ResultActions result = mockMvc.perform(multipart("/products")
+            .file(new MockMultipartFile("product", "product", MediaType.APPLICATION_JSON_VALUE,
+                objectMapper.writeValueAsBytes(createRequest)))
+            .session(session)
+        );
+
+        //then
+        result.andDo(print())
+            .andExpect(status().isBadRequest());
+
+        then(productService).should().createProduct(refEq(createRequest),
+            refEq(null),
+            refEq((String) session.getAttribute(UserConstant.EMAIL)));
+
+        then(productService).shouldHaveNoMoreInteractions();
     }
 
     private ProductDto.CreateRequest createProductCreateRequest(Long marketId, String name,
