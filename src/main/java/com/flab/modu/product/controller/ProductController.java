@@ -20,7 +20,7 @@ public class ProductController {
     @PostMapping(value = "products", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ProductDto.CreateResponse createProduct(
         @RequestPart("product") @Valid ProductDto.CreateRequest createRequest,
-        @RequestPart("image") MultipartFile imageMultipartFile,
+        @RequestPart(value = "image",required = false) MultipartFile imageMultipartFile,
         @SessionAttribute(value = UserConstant.EMAIL) String sellerId) {
         return productService.createProduct(createRequest, imageMultipartFile, sellerId);
     }

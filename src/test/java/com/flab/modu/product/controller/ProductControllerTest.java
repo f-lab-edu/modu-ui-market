@@ -1,6 +1,7 @@
 package com.flab.modu.product.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
@@ -155,18 +156,16 @@ class ProductControllerTest {
     @DisplayName("이미지 정보가 없어도 상품 생성에 성공한다.")
     public void givenNoImage_whenCreatingProduct_then200OK() throws Exception {
         //given
-        MockMultipartFile multipartFile = createMultipartFile();
         ProductDto.CreateRequest createRequest = createProductCreateRequest(1L, "상품1", 10000, 20,
             ProductStatus.ACTIVE);
         ProductDto.CreateResponse createResponse = createProductCreateResponse(createRequest,
             null);
         given(productService.createProduct(any(ProductDto.CreateRequest.class),
-            any(MultipartFile.class), any(String.class)))
+            nullable(MultipartFile.class), any(String.class)))
             .willReturn(createResponse);
 
         //when
         ResultActions result = mockMvc.perform(multipart("/products")
-            .file(multipartFile)
             .file(new MockMultipartFile("product", "product", MediaType.APPLICATION_JSON_VALUE,
                 objectMapper.writeValueAsBytes(createRequest)))
             .session(session)
@@ -185,7 +184,7 @@ class ProductControllerTest {
             .andExpect(jsonPath("$.market").value(CoreMatchers.notNullValue()));
 
         then(productService).should().createProduct(refEq(createRequest),
-            refEq(multipartFile),
+            refEq(null),
             refEq((String) session.getAttribute(UserConstant.EMAIL)));
     }
 
