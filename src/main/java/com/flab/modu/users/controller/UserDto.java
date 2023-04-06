@@ -80,4 +80,18 @@ public class UserDto {
             this.password = encryption;
         }
     }
+
+    @Getter
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class PasswordRequest {
+
+        @NotBlank(message = "비밀번호를 입력해주세요.")
+        @Size(min = 8, max = 20, message = "비밀번호는 8자 이상 20자 이하로 입력해주세요.")
+        private String password;
+
+        @Builder
+        public PasswordRequest(String password) {
+            this.password = password;
+        }
+    }
 }
