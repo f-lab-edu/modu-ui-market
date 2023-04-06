@@ -4,6 +4,7 @@ import com.flab.modu.market.exception.DuplicatedUrlException;
 import com.flab.modu.users.exception.DuplicatedEmailException;
 import com.flab.modu.users.exception.NotExistedUserException;
 import com.flab.modu.users.exception.UnauthenticatedUserException;
+import com.flab.modu.users.exception.WrongPasswordException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +36,14 @@ public class GlobalExceptionHandler {
     public final ResponseEntity<String> handleUnauthenticatedUserException(
         UnauthenticatedUserException exception) {
         log.debug("인증되지 않은 사용자입니다.", exception);
+
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(WrongPasswordException.class)
+    public final ResponseEntity<String> handleWrongPasswordException(
+        WrongPasswordException exception) {
+        log.debug(exception.getMessage(), exception);
 
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.UNAUTHORIZED);
     }
