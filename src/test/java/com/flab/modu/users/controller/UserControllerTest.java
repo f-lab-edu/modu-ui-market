@@ -3,6 +3,7 @@ package com.flab.modu.users.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willAnswer;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.BDDMockito.willThrow;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -16,8 +17,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flab.modu.users.controller.UserDto.CreateRequest;
 import com.flab.modu.users.controller.UserDto.LoginRequest;
+import com.flab.modu.users.controller.UserDto.PasswordRequest;
 import com.flab.modu.users.exception.DuplicatedEmailException;
 import com.flab.modu.users.exception.NotExistedUserException;
+import com.flab.modu.users.exception.WrongPasswordException;
 import com.flab.modu.users.service.LoginService;
 import com.flab.modu.users.service.UserService;
 import org.junit.jupiter.api.DisplayName;
@@ -63,7 +66,7 @@ class UserControllerTest {
                 .content(objectMapper.writeValueAsString(createRequest)))
             .andDo(print())
             .andExpect(status().isCreated())
-            .andDo(document("create-user",
+            .andDo(document("users/create/success",
                 requestFields(
                     fieldWithPath("email").type(JsonFieldType.STRING)
                         .description("로그인 시 사용할 이메일"),
@@ -162,6 +165,61 @@ class UserControllerTest {
             .andDo(document("users/login/failure"));
     }
 
+    @Test
+    @DisplayName("회원탈퇴 - 회원탈퇴에 성공한다.")
+    void deleteUser_successful() throws Exception {
+        PasswordRequest passwordRequest = getPasswordRequest();
+        String password = passwordRequest.getPassword();
+
+        String email = "test@modu.com";
+        willAnswer(invocation -> email).given(loginService).getLoginUser();
+        willDoNothing().given(userService).delete(email, password);
+        willDoNothing().given(loginService).logout();
+
+        mockMvc.perform(delete("/users")
+                .header("email", email)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(passwordRequest)))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andDo(document("users/delete/success",
+                requestFields(
+                    fieldWithPath("password").type(JsonFieldType.STRING)
+                        .description("비밀번호")
+                )
+            ));
+
+        then(loginService).should().getLoginUser();
+        then(userService).should().delete(email, password);
+        then(loginService).should().logout();
+    }
+
+    @Test
+    @DisplayName("회원탈퇴 - 요청정보가 일치하지 않아 회원탈퇴에 실패한다.")
+    void deleteUser_failure() throws Exception {
+        PasswordRequest passwordRequest = getPasswordRequest();
+        String password = passwordRequest.getPassword();
+
+        String email = "test@modu.com";
+        willAnswer(invocation -> email).given(loginService).getLoginUser();
+        willThrow(new WrongPasswordException()).given(userService).delete(email, password);
+
+        mockMvc.perform(delete("/users")
+                .header("email", email)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(passwordRequest)))
+            .andDo(print())
+            .andExpect(status().isUnauthorized())
+            .andDo(document("users/delete/failure",
+                requestFields(
+                    fieldWithPath("password").type(JsonFieldType.STRING)
+                        .description("비밀번호")
+                )
+            ));
+
+        then(loginService).should().getLoginUser();
+    }
+
     private CreateRequest getCreateRequest() {
         CreateRequest createRequest = CreateRequest.builder()
             .email("test123@modu.com")
@@ -176,6 +234,12 @@ class UserControllerTest {
         return LoginRequest.builder()
             .email("test123@modu.com")
             .password("test1234455")
+            .build();
+    }
+
+    private PasswordRequest getPasswordRequest() {
+        return PasswordRequest.builder()
+            .password("test12344")
             .build();
     }
 }
