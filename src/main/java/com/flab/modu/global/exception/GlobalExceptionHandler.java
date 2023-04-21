@@ -1,6 +1,6 @@
 package com.flab.modu.global.exception;
 
-import com.flab.modu.market.exception.DuplicatedUrlException;
+import com.flab.modu.global.response.ErrorResponseDto;
 import com.flab.modu.users.exception.DuplicatedEmailException;
 import com.flab.modu.users.exception.NotExistedUserException;
 import com.flab.modu.users.exception.UnauthenticatedUserException;
@@ -49,19 +49,9 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
-    public ResponseEntity<String> errorHandler(MethodArgumentNotValidException e) {
-
-        return ResponseEntity.badRequest().body(
-            "{\"message\":\"" + e.getBindingResult().getAllErrors().get(0).getDefaultMessage()
-                + "\"}"
-        );
-    }
-
-    @ExceptionHandler({DuplicatedUrlException.class})
-    public ResponseEntity<String> handleDuplicatedUrlException(DuplicatedUrlException e) {
-
-        return ResponseEntity.badRequest().body(
-            "{\"message\":\"중복된 마켓주소입니다.\"}"
-        );
+    public ResponseEntity<ErrorResponseDto> errorHandler(MethodArgumentNotValidException e) {
+        return new ResponseEntity<ErrorResponseDto>(
+            new ErrorResponseDto(e.getAllErrors().get(0).getDefaultMessage()),
+            HttpStatus.BAD_REQUEST);
     }
 }
