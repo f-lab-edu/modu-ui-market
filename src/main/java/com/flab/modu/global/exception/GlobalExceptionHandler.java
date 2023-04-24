@@ -1,6 +1,7 @@
 package com.flab.modu.global.exception;
 
 import com.flab.modu.global.response.ErrorResponseDto;
+import com.flab.modu.product.exception.InsufficientStockException;
 import com.flab.modu.users.exception.DuplicatedEmailException;
 import com.flab.modu.users.exception.NotExistedUserException;
 import com.flab.modu.users.exception.UnauthenticatedUserException;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @RestControllerAdvice
@@ -53,5 +55,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<ErrorResponseDto>(
             new ErrorResponseDto(e.getAllErrors().get(0).getDefaultMessage()),
             HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InsufficientStockException.class)
+    public final ResponseStatusException handleInsufficientStockException(
+        InsufficientStockException exception) {
+        log.debug(exception.getMessage(), exception);
+
+        return new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 }
