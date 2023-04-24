@@ -3,7 +3,8 @@ package com.flab.modu.order.controller;
 import com.flab.modu.order.domain.common.OrderStatus;
 import com.flab.modu.order.domain.entity.Order;
 import com.flab.modu.users.domain.entity.User;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -16,10 +17,10 @@ public class OrderDto {
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class OrderRequest {
 
-        @NotBlank(message = "상품을 선택해주세요.")
+        @NotNull(message = "상품을 선택해주세요.")
         private Long productId;
 
-        @NotBlank(message = "개수를 입력해주세요.")
+        @Min(1)
         private int amount;
 
         private String deliveryMassage;

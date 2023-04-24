@@ -50,17 +50,6 @@ class OrderServiceTest {
     @InjectMocks
     private OrderService orderService;
 
-    @BeforeEach
-    public void setUp() {
-        User.builder()
-            .email("test@modu.com")
-            .name("테스트네임")
-            .password("test12345@")
-            .role(UserRole.BUYER)
-            .phoneNumber("01012345678")
-            .build();
-    }
-
     @Test
     @DisplayName("정상적으로 주문 생성에 성공한다.")
     public void createOrder_successful() throws Exception {
