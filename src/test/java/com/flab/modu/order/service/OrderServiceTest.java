@@ -9,6 +9,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willThrow;
 
 import com.flab.modu.market.domain.Market;
 import com.flab.modu.market.domain.MarketStatus;
@@ -64,7 +65,7 @@ class OrderServiceTest {
     @DisplayName("정상적으로 주문 생성에 성공한다.")
     public void createOrder_successful() throws Exception {
         // give
-        OrderDto.OrderRequest orderRequest = createTestOrder(1);
+        OrderDto.OrderRequest orderRequest = createOrderRequest(1);
         Product product = createProduct(10);
         User buyer = createBuyer();
         Order order = createOrder(buyer);
@@ -85,7 +86,7 @@ class OrderServiceTest {
     @DisplayName("존재하지 않는 유저의 주문은 실패한다.")
     public void notExistEmail_createOrder_failure() throws Exception {
         // give
-        OrderDto.OrderRequest orderRequest = createTestOrder(1);
+        OrderDto.OrderRequest orderRequest = createOrderRequest(1);
         given(userRepository.findByEmail(anyString())).willThrow(new NotExistedUserException());
 
         // when
@@ -103,7 +104,7 @@ class OrderServiceTest {
     @DisplayName("존재하지 않는 상품의 주문은 실패한다.")
     public void notExistProduct_createOrder_failure() throws Exception {
         // give
-        OrderDto.OrderRequest orderRequest = createTestOrder(1);
+        OrderDto.OrderRequest orderRequest = createOrderRequest(1);
         User buyer = createBuyer();
         given(userRepository.findByEmail(anyString())).willReturn(Optional.of(buyer));
         given(productService.getProduct(anyLong())).willThrow(
@@ -124,13 +125,13 @@ class OrderServiceTest {
     @DisplayName("상품재고가 다 떨어졌다면 상품의 주문은 실패한다.")
     public void zeroStockProduct_createOrder_failure() throws Exception {
         // give
-        OrderDto.OrderRequest orderRequest = createTestOrder(10);
+        OrderDto.OrderRequest orderRequest = createOrderRequest(10);
         Product product = createProduct(0);
         User buyer = createBuyer();
         given(userRepository.findByEmail(anyString())).willReturn(Optional.of(buyer));
         given(productService.getProduct(anyLong())).willReturn(product);
-        given(productService.sellProduct(eq(product), anyInt())).willThrow(
-            new InsufficientStockException("상품의 재고가 부족합니다."));
+        willThrow(new InsufficientStockException("상품의 재고가 부족합니다.")).given(productService)
+            .sellProduct(eq(product), anyInt());
 
         // when
         Throwable exception = assertThrows(
@@ -149,13 +150,13 @@ class OrderServiceTest {
     @DisplayName("주문수량보다 상품재고가 부족하면 상품의 주문은 실패한다.")
     public void insufficientStock_createOrder_failure() throws Exception {
         // give
-        OrderDto.OrderRequest orderRequest = createTestOrder(10);
+        OrderDto.OrderRequest orderRequest = createOrderRequest(10);
         Product product = createProduct(2);
         User buyer = createBuyer();
         given(userRepository.findByEmail(anyString())).willReturn(Optional.of(buyer));
         given(productService.getProduct(anyLong())).willReturn(product);
-        given(productService.sellProduct(eq(product), anyInt())).willThrow(
-            new InsufficientStockException("주문 수량이 상품의 재고보다 많습니다."));
+        willThrow(new InsufficientStockException("주문 수량이 상품의 재고보다 많습니다.")).given(productService)
+            .sellProduct(eq(product), anyInt());
 
         // when
         Throwable exception = assertThrows(
@@ -171,7 +172,7 @@ class OrderServiceTest {
     }
 
 
-    private OrderDto.OrderRequest createTestOrder(int orderAmount) {
+    private OrderDto.OrderRequest createOrderRequest(int orderAmount) {
         return OrderDto.OrderRequest.builder()
             .productId(1L)
             .amount(orderAmount)

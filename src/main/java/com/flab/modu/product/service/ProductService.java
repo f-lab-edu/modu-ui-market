@@ -78,11 +78,10 @@ public class ProductService {
     }
 
     @Transactional
-    public Long sellProduct(Product product, int orderAmount) {
+    public void sellProduct(Product product, int orderAmount) {
         checkStockAvailability(product.getStock(), orderAmount);
 
         product.sell(orderAmount);
-        return product.getId();
     }
 
     private void checkStockAvailability(int productStock, int orderAmount) {
