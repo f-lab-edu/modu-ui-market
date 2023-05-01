@@ -21,9 +21,9 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class ProductService {
 
-    private MarketRepository marketRepository;
+    private final MarketRepository marketRepository;
 
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
 
     public ProductDto.CreateResponse createProduct(ProductDto.CreateRequest createRequest,
         MultipartFile imageMultipartFile, String loginId) {

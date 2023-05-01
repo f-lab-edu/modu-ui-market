@@ -11,6 +11,7 @@ import com.flab.modu.product.service.ProductService;
 import com.flab.modu.users.domain.entity.User;
 import com.flab.modu.users.exception.NotExistedUserException;
 import com.flab.modu.users.repository.UserRepository;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ public class OrderService {
 
     private final ProductService productService;
 
+    @Transactional
     public Long createOrder(OrderDto.OrderRequest orderRequest, String userEmail) {
 
         User buyer = userRepository.findByEmail(userEmail)
