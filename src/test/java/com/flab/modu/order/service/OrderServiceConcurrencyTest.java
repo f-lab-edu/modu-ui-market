@@ -9,6 +9,7 @@ import com.flab.modu.market.domain.MarketStatus;
 import com.flab.modu.market.repository.MarketRepository;
 import com.flab.modu.order.controller.OrderDto;
 import com.flab.modu.order.controller.OrderDto.OrderRequest;
+import com.flab.modu.order.exception.OrderFailureException;
 import com.flab.modu.order.repository.OrderRepository;
 import com.flab.modu.product.domain.common.ProductStatus;
 import com.flab.modu.product.domain.entity.Product;
@@ -89,7 +90,7 @@ public class OrderServiceConcurrencyTest {
 
     @Test
     @DisplayName("낙관적 락 동시 주문 테스트")
-    void concurrency_test1() throws Exception {
+    void concurrency_test() throws Exception {
         // given
         int orderAmount = 1;
         OrderRequest orderRequest = createOrderRequest(orderAmount);
@@ -121,6 +122,44 @@ public class OrderServiceConcurrencyTest {
 
         // then
         assertTrue(result instanceof OptimisticLockingFailureException);
+        Product product = productService.getProduct(savedProduct.getId());
+        assertEquals(product.getStock(), savedProduct.getStock() - orderAmount);
+    }
+
+    @Test
+    @DisplayName("낙관적 락 예외처리 테스트")
+    void concurrency_transaction_rollback_test() throws Exception {
+        // given
+        int orderAmount = 1;
+        OrderRequest orderRequest = createOrderRequest(orderAmount);
+        ExecutorService executorService = Executors.newFixedThreadPool(3);
+
+        // when
+        Future<?> future = executorService.submit(
+            () -> {
+                orderService.createOrder(orderRequest, EMAIL);
+            });
+        Future<?> future2 = executorService.submit(
+            () -> {
+                orderService.createOrder(orderRequest, EMAIL);
+            });
+        Future<?> future3 = executorService.submit(
+            () -> {
+                orderService.createOrder(orderRequest, EMAIL);
+            });
+
+        Exception result = new Exception();
+
+        try {
+            future.get();
+            future2.get();
+            future3.get();
+        } catch (ExecutionException e) {
+            result = (Exception) e.getCause();
+        }
+
+        // then
+        assertTrue(result instanceof OrderFailureException);
         Product product = productService.getProduct(savedProduct.getId());
         assertEquals(product.getStock(), savedProduct.getStock() - orderAmount);
     }

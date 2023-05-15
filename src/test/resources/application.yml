@@ -6,7 +6,24 @@ spring:
     driver-class-name: org.h2.Driver
 
   jpa:
+    defer-datasource-initialization: true
     hibernate:
       ddl-auto: create
-    database-platform: org.hibernate.dialect.H2Dialect
+    database: h2
     show-sql: true
+
+  database-platform: org.hibernate.dialect.H2Dialect
+
+  properties:
+    hibernate.format_sql: true
+
+logging:
+  level:
+#    ROOT: INFO
+#    org.hibernate: DEBUG
+#    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+#    org.springframework.orm: TRACE
+#    org.hibernate.type: TRACE
+    org.springframework.transaction: TRACE
+#    com.zaxxer.hikari: TRACE
+#    com.mysql.cj.jdbc: TRACE
