@@ -70,11 +70,11 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
     }
 
     private BooleanExpression userEmailEq(String userEmail) {
-        return hasText(userEmail) ? user.email.endsWith(userEmail) : null;
+        return hasText(userEmail) ? user.email.contains(userEmail) : null;
     }
 
     private BooleanExpression userNameEq(String userName) {
-        return hasText(userName) ? user.name.endsWith(userName) : null;
+        return hasText(userName) ? user.name.contains(userName) : null;
     }
 
     private BooleanExpression userRoleEq(UserRole userRole) {
@@ -82,6 +82,6 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
     }
 
     private BooleanExpression userPhoneEq(String userPhoneNumber) {
-        return hasText(userPhoneNumber) ? user.phoneNumber.endsWith(userPhoneNumber) : null;
+        return hasText(userPhoneNumber) ? user.phoneNumber.contains(userPhoneNumber) : null;
     }
 }
