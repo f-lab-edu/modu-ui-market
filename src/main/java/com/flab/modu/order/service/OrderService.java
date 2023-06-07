@@ -3,7 +3,6 @@ package com.flab.modu.order.service;
 import com.flab.modu.order.controller.OrderDto;
 import com.flab.modu.order.domain.entity.Order;
 import com.flab.modu.order.domain.entity.OrderProduct;
-import com.flab.modu.order.exception.OrderFailureException;
 import com.flab.modu.order.repository.OrderRepository;
 import com.flab.modu.product.domain.entity.Product;
 import com.flab.modu.product.service.ProductService;
@@ -12,10 +11,7 @@ import com.flab.modu.users.exception.NotExistedUserException;
 import com.flab.modu.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.OptimisticLockingFailureException;
-import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
@@ -29,7 +25,7 @@ public class OrderService {
 
     private final ProductService productService;
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional
     public Long createOrder(OrderDto.OrderRequest orderRequest, String userEmail) {
 
         User buyer = userRepository.findByEmail(userEmail)
@@ -50,14 +46,5 @@ public class OrderService {
         order.addProduct(orderProduct);
 
         return orderRepository.save(order).getId();
-    }
-
-    @Transactional
-    public Long callOrder(OrderDto.OrderRequest orderRequest, String userEmail) {
-        try {
-            return createOrder(orderRequest, userEmail);
-        } catch (ObjectOptimisticLockingFailureException e) {
-            throw new OrderFailureException();
-        }
     }
 }

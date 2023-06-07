@@ -53,6 +53,9 @@ public class OrderServiceConcurrencyTest {
     @Autowired
     OrderService orderService;
 
+    @Autowired
+    OrderCallService orderCallService;
+
     final String EMAIL = "test@test.com";
 
     private Product savedProduct;
@@ -137,15 +140,15 @@ public class OrderServiceConcurrencyTest {
         // when
         Future<?> future = executorService.submit(
             () -> {
-                orderService.createOrder(orderRequest, EMAIL);
+                orderCallService.callOrder(orderRequest, EMAIL);
             });
         Future<?> future2 = executorService.submit(
             () -> {
-                orderService.createOrder(orderRequest, EMAIL);
+                orderCallService.callOrder(orderRequest, EMAIL);
             });
         Future<?> future3 = executorService.submit(
             () -> {
-                orderService.createOrder(orderRequest, EMAIL);
+                orderCallService.callOrder(orderRequest, EMAIL);
             });
 
         Exception result = new Exception();
