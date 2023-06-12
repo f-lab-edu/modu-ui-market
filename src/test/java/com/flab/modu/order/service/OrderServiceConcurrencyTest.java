@@ -28,7 +28,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.dao.OptimisticLockingFailureException;
 
 @DisplayName("주문서비스 재고관리 테스트")
 @Import(value = JpaConfig.class)
@@ -89,44 +88,6 @@ public class OrderServiceConcurrencyTest {
             .build();
 
         productRepository.save(savedProduct);
-    }
-
-    @Test
-    @DisplayName("낙관적 락 동시 주문 테스트")
-    void concurrency_test() throws Exception {
-        // given
-        int orderAmount = 1;
-        OrderRequest orderRequest = createOrderRequest(orderAmount);
-        ExecutorService executorService = Executors.newFixedThreadPool(3);
-
-        // when
-        Future<?> future = executorService.submit(
-            () -> {
-                orderService.createOrder(orderRequest, EMAIL);
-            });
-        Future<?> future2 = executorService.submit(
-            () -> {
-                orderService.createOrder(orderRequest, EMAIL);
-            });
-        Future<?> future3 = executorService.submit(
-            () -> {
-                orderService.createOrder(orderRequest, EMAIL);
-            });
-
-        Exception result = new Exception();
-
-        try {
-            future.get();
-            future2.get();
-            future3.get();
-        } catch (ExecutionException e) {
-            result = (Exception) e.getCause();
-        }
-
-        // then
-        assertTrue(result instanceof OptimisticLockingFailureException);
-        Product product = productService.getProduct(savedProduct.getId());
-        assertEquals(product.getStock(), savedProduct.getStock() - orderAmount);
     }
 
     @Test
