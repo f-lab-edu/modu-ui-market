@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flab.modu.order.controller.OrderDto.OrderRequest;
+import com.flab.modu.order.service.OrderCallService;
 import com.flab.modu.order.service.OrderService;
 import com.flab.modu.users.service.LoginService;
 import org.junit.jupiter.api.DisplayName;
@@ -35,7 +36,7 @@ import org.springframework.test.web.servlet.MockMvc;
 class OrderControllerTest {
 
     @MockBean
-    private OrderService orderService;
+    private OrderCallService orderCallService;
 
     @MockBean
     private LoginService loginService;
@@ -54,7 +55,7 @@ class OrderControllerTest {
         OrderRequest orderRequest = createOrderRequest(1);
 
         willAnswer(invocation -> USER_EMAIL).given(loginService).getLoginUser();
-        given(orderService.createOrder(orderRequest, USER_EMAIL)).willReturn(1L);
+        given(orderCallService.callOrder(orderRequest, USER_EMAIL)).willReturn(1L);
 
         mockMvc.perform(post("/orders")
                 .header("email", USER_EMAIL)
@@ -77,7 +78,7 @@ class OrderControllerTest {
                 )
             ));
 
-        then(orderService).should().createOrder(refEq(orderRequest), anyString());
+        then(orderCallService).should().callOrder(refEq(orderRequest), anyString());
     }
 
     private OrderDto.OrderRequest createOrderRequest(int orderAmount) {
