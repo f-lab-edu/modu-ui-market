@@ -3,6 +3,7 @@ package com.flab.modu.global.exception;
 import com.flab.modu.global.response.ErrorResponseDto;
 import com.flab.modu.order.exception.OrderFailureException;
 import com.flab.modu.product.exception.InsufficientStockException;
+import com.flab.modu.product.exception.NotExistProductException;
 import com.flab.modu.users.exception.DuplicatedEmailException;
 import com.flab.modu.users.exception.NotExistedUserException;
 import com.flab.modu.users.exception.UnauthenticatedUserException;
@@ -69,6 +70,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(OrderFailureException.class)
     public final ResponseStatusException handleOrderFailureException(
         OrderFailureException exception) {
+        log.debug(exception.getMessage(), exception);
+
+        return new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage());
+    }
+
+    @ExceptionHandler(NotExistProductException.class)
+    public final ResponseStatusException handleNotExistProductException(
+        NotExistProductException exception) {
         log.debug(exception.getMessage(), exception);
 
         return new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage());
