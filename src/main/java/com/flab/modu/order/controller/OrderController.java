@@ -2,7 +2,7 @@ package com.flab.modu.order.controller;
 
 import com.flab.modu.global.annotation.CurrentUser;
 import com.flab.modu.global.annotation.LoginCheck;
-import com.flab.modu.order.service.OrderService;
+import com.flab.modu.order.service.OrderCallService;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class OrderController {
 
-    private final OrderService orderService;
+    private final OrderCallService orderCallService;
 
     @LoginCheck
     @PostMapping("/orders")
     @ResponseStatus(HttpStatus.CREATED)
     public Long createOrder(@RequestBody @Valid OrderDto.OrderRequest orderRequest, @CurrentUser String email) {
-        return orderService.createOrder(orderRequest, email);
+        return orderCallService.callOrder(orderRequest, email);
     }
 }
