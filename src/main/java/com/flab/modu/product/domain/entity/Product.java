@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.Version;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -47,6 +48,9 @@ public class Product extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private ProductStatus status;
 
+    @Version
+    private Long version;
+
     @Builder
     public Product(Market market, String name, Integer stock, Integer price, byte[] image,
         ProductStatus status) {
@@ -64,5 +68,9 @@ public class Product extends BaseTimeEntity {
         this.price = price;
         this.image = image;
         this.status = status;
+    }
+
+    public void sell(int orderAmount) {
+        this.stock -= orderAmount;
     }
 }
