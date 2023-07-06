@@ -24,7 +24,7 @@ pipeline {
           emailext body: "[${env.STAGE_NAME}] Stage Failure",
             subject: "[Jenkins CI/CD] Failure Alarm",
             //recipientProviders: [developers(), requestor()],
-            to: ["jungcali94@gmail.com","ckdbwls11@naver.com"]
+            to: "jungcali94@gmail.com,ckdbwls11@naver.com"
         }
       }
     }
