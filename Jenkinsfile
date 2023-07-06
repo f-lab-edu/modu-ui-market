@@ -23,11 +23,11 @@ pipeline {
           setBuildStatus("Build failed [stage:${env.STAGE_NAME}]", 'FAILURE');
           emailext subject: "${env.BRANCH_NAME} - Build#${currentBuild.number} - ${currentBuild.currentResult}!",
             body: """<strong>branch</strong> : ${env.BRANCH_NAME}<br>
-            <strong>url</strong> : ${env.JOB_URL}<br>
-            <strong>build number</strong> : Build#${currentBuild.number}<br>
-            <strong>stage</strong> : ${env.STAGE_NAME}<br>
-            <strong>result</strong> : ${currentBuild.currentResult}<br>
-            <strong>duration</strong> : ${currentBuild.duration}""",
+                    <strong>url</strong> : ${env.JOB_URL}<br>
+                    <strong>build number</strong> : Build#${currentBuild.number}<br>
+                    <strong>stage</strong> : ${env.STAGE_NAME}<br>
+                    <strong>result</strong> : ${currentBuild.currentResult}<br>
+                    <strong>duration</strong> : ${currentBuild.duration}""",
             //to: "jungcali94@gmail.com,ckdbwls11@naver.com"
             from: 'yujin.moma@gmail.com',//변수로 넣자
             to: 'ckdbwls11@naver.com'//이것도 변수로 고민.. 하드코딩은 노노
