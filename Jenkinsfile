@@ -49,9 +49,9 @@ pipeline {
 
       setBuildStatus("Build failed ([${env.STAGE_NAME}] stage error)", "FAILURE");
 
-      emailext body: '[${env.STAGE_NAME}] Stage Failure!',
-        subject: '[Jenkins CI/CD] Failure Alarm',
-        recipientProviders: developers(), requestor()
+      emailext body: "[${env.STAGE_NAME}] Stage Failure",
+        subject: "[Jenkins CI/CD] Failure Alarm",
+        recipientProviders: [developers(), requestor()]
     }
   }
 }
