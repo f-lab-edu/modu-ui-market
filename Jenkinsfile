@@ -22,7 +22,8 @@ pipeline {
           echo "[${env.STAGE_NAME}] stage failed..."
           emailext body: "[${env.STAGE_NAME}] Stage Failure",
             subject: "[Jenkins CI/CD] Failure Alarm",
-            recipientProviders: [developers(), requestor()]
+            //recipientProviders: [developers(), requestor()],
+            to: "ckdbwls11@naver.com"
         }
       }
     }
