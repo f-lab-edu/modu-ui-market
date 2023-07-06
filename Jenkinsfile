@@ -22,7 +22,7 @@ pipeline {
           echo "[${env.STAGE_NAME}] stage failed..."
           setBuildStatus("Build failed [stage:'${env.STAGE_NAME}']", "FAILURE");
           emailext subject: '''${DEFAULT_SUBJECT}''',
-            body: "<p>${PROJECT_NAME} - Build # ${BUILD_NUMBER} - ${BUILD_STATUS}:</p><p>Check console output at ${BUILD_URL} to view the results.</p><p>Stage : ${env.STAGE_NAME}</p>",
+            body: $DEFAULT_CONTENT,
             //to: "jungcali94@gmail.com,ckdbwls11@naver.com"
             to: "ckdbwls11@naver.com"
         }
