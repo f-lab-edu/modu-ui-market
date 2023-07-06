@@ -17,6 +17,14 @@ pipeline {
         sh './gradlew test'
         echo 'test success'
       }
+      post {
+        failure {
+          echo "[${env.STAGE_NAME}] stage failed..."
+          emailext body: "[${env.STAGE_NAME}] Stage Failure",
+            subject: "[Jenkins CI/CD] Failure Alarm",
+            recipientProviders: [developers(), requestor()]
+        }
+      }
     }
 
     stage('Build') {
@@ -45,13 +53,7 @@ pipeline {
       setBuildStatus("Build succeeded", "SUCCESS");
     }
     failure {
-      echo "I failed :( [stage : ${env.STAGE_NAME}]"
-
-      setBuildStatus("Build failed ([${env.STAGE_NAME}] stage error)", "FAILURE");
-
-      emailext body: "[${env.STAGE_NAME}] Stage Failure",
-        subject: "[Jenkins CI/CD] Failure Alarm",
-        recipientProviders: [developers(), requestor()]
+      setBuildStatus("Build failed", "FAILURE");
     }
   }
 }
