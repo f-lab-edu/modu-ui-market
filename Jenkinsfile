@@ -3,7 +3,7 @@ echo "---build start---"
 pipeline {
   agent any
   environment {
-    FROM_EMAIL = 'yujin.moma@gmail.com';
+    FROM_EMAIL = 'modu-ui-market jenkins <yujin.moma@gmail.com>';
     //TO_EMAIL = 'jungcali94@gmail.com,ckdbwls11@naver.com';
     TO_EMAIL = 'ckdbwls11@naver.com';
   }
