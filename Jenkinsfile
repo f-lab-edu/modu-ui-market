@@ -34,7 +34,8 @@ pipeline {
                     <strong>result</strong> : ${currentBuild.currentResult}<br>
                     <strong>duration</strong> : ${currentBuild.duration/1000}s""",
             from: "${env.FROM_EMAIL}",
-            to: "${env.TO_EMAIL}"//변수로 처리할 방법 더 고민해보자
+            //to: "${env.TO_EMAIL}"//변수로 처리할 방법 더 고민해보자
+            to: [developers(), requestor()]
         }
       }
     }
