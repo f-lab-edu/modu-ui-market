@@ -26,7 +26,7 @@ pipeline {
         failure {
           echo "[${env.STAGE_NAME}] stage failed..."
           setBuildStatus("Build failed [stage:${env.STAGE_NAME}]", 'FAILURE');
-          emailext subject: "[modu-ui-market jenkins] ${env.BRANCH_NAME} - Build#${currentBuild.number} - ${currentBuild.currentResult}!",
+          emailext subject: "${env.BRANCH_NAME} - Build#${currentBuild.number} - ${currentBuild.currentResult}!",
             body: """<strong>branch</strong> : ${env.BRANCH_NAME}<br>
                     <strong>url</strong> : <a href=\"${env.JOB_URL}\">${env.JOB_URL}</a><br>
                     <strong>build number</strong> : Build#${currentBuild.number}<br>
