@@ -23,9 +23,7 @@ pipeline {
         echo 'test success'
       }
       post {
-        failure {
-          doFailPost();
-        }
+        doFailPost();
       }
     }
 
@@ -68,16 +66,18 @@ void setBuildStatus(String message, String state){
 }
 
 void doFailPost(){
-  echo "[${env.STAGE_NAME}] stage failed..."
-  setBuildStatus("Build failed [stage:${env.STAGE_NAME}]", 'FAILURE');
-  emailext subject: "${env.BRANCH_NAME} - Build#${currentBuild.number} - ${currentBuild.currentResult}!",
-    body: """<strong>branch</strong> : ${env.BRANCH_NAME}<br>
-            <strong>url</strong> : <a href=\"${env.JOB_URL}\">${env.JOB_URL}</a><br>
-            <strong>build number</strong> : Build#${currentBuild.number}<br>
-            <strong>stage</strong> : ${env.STAGE_NAME}<br>
-            <strong>result</strong> : ${currentBuild.currentResult}<br>
-            <strong>duration</strong> : ${currentBuild.duration/1000}s""",
-    from: "${env.FROM_EMAIL}",
-    to: "${env.FROM_EMAIL}"
-    recipientProviders : [developers()]
+  failure {
+    echo "[${env.STAGE_NAME}] stage failed..."
+    setBuildStatus("Build failed [stage:${env.STAGE_NAME}]", 'FAILURE');
+    emailext subject: "${env.BRANCH_NAME} - Build#${currentBuild.number} - ${currentBuild.currentResult}!",
+      body: """<strong>branch</strong> : ${env.BRANCH_NAME}<br>
+              <strong>url</strong> : <a href=\"${env.JOB_URL}\">${env.JOB_URL}</a><br>
+              <strong>build number</strong> : Build#${currentBuild.number}<br>
+              <strong>stage</strong> : ${env.STAGE_NAME}<br>
+              <strong>result</strong> : ${currentBuild.currentResult}<br>
+              <strong>duration</strong> : ${currentBuild.duration/1000}s""",
+      from: "${env.FROM_EMAIL}",
+      to: "${env.FROM_EMAIL}"
+      recipientProviders : [developers()]
+  }
 }
