@@ -78,5 +78,6 @@ void doFailPost(){
             <strong>result</strong> : ${currentBuild.currentResult}<br>
             <strong>duration</strong> : ${currentBuild.duration/1000}s""",
     from: "${env.FROM_EMAIL}",
-    to: recipients()
+    to: "${env.FROM_EMAIL}"
+    recipientProviders : [recipients()]
 }
