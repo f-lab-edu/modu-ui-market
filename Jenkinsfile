@@ -32,7 +32,7 @@ pipeline {
                     <strong>build number</strong> : Build#${currentBuild.number}<br>
                     <strong>stage</strong> : ${env.STAGE_NAME}<br>
                     <strong>result</strong> : ${currentBuild.currentResult}<br>
-                    <strong>duration</strong> : ${currentBuild.duration}""",
+                    <strong>duration</strong> : ${currentBuild.duration/1000}s""",
             from: "${env.FROM_EMAIL}",
             to: "${env.TO_EMAIL}"//변수로 처리할 방법 더 고민해보자
         }
