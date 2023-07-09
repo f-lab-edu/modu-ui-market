@@ -61,7 +61,7 @@ class AdminServiceTest {
         return UserResponse.builder()
             .id((long) i)
             .email(getConcatData("test@modu.com", i))
-            .name(getConcatData("testName", i))
+            .name(getConcatData("testmodu", i))
             .phoneNumber(getConcatData("0100000000", i))
             .role(UserRole.BUYER)
             .build();
