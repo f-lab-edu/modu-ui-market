@@ -103,7 +103,7 @@ void doFailPost(){
             <strong>result</strong> : ${currentBuild.currentResult}<br>
             <strong>duration</strong> : ${currentBuild.duration/1000}s<br>
             <hr/>
-            <strong>build log<strong>
+            <strong>build log</strong>
             <hr/>
             """+buildLogStr,
     from: "${env.FROM_EMAIL}",
