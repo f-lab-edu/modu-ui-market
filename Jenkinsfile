@@ -101,7 +101,7 @@ void doFailPost(){
             <strong>stage</strong> : ${env.STAGE_NAME}<br>
             <strong>result</strong> : ${currentBuild.currentResult}<br>
             <strong>duration</strong> : ${currentBuild.duration/1000}s<br>
-            ${BUILD_LOG,maxLines=9999,escapeHtml=false}""",
+            ${currentBuild.rawBuild.getLog(100)}""",
     from: "${env.FROM_EMAIL}",
     to: "${env.FROM_EMAIL}",
     recipientProviders : [developers(),culprits(),buildUser()]
