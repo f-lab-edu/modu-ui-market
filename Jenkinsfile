@@ -84,7 +84,7 @@ void doFailPost(){
   } */
 
   script{
-    def full_error_msg = $(curl -s -k -X GET $build_url/consoleText 2> /dev/null | tr -d '\n')
+    def full_error_msg = $(curl -s -k -X "GET" "$build_url/consoleText" 2> /dev/null | tr -d '\n')
     echo "full_error_msg = ${full_error_msg}"
   }
 
