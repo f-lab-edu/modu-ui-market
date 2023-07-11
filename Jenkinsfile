@@ -17,7 +17,9 @@ pipeline {
 
     stage('Test') {
       steps {
+        echo 'ERROR: script returned exit code -1'
         sh 'exit 1' //TEST
+
         sh 'chmod +x gradlew'
         sh './gradlew test'
         echo 'test success'
@@ -70,6 +72,11 @@ void setBuildStatus(String message, String state){
 void doFailPost(){
   echo "[${env.STAGE_NAME}] stage failed..."
   setBuildStatus("Build failed [stage:${env.STAGE_NAME}]", 'FAILURE');
+
+  script{
+    def full_error_msg = $(curl -s -k -X GET $url/job/$job_name/lastBuild/consoleText 2> /dev/null | tac | grep Error | head -n 2 | tr -d '\n')
+    echo "full_error_msg = ${full_error_msg}"
+  }
 
   emailext subject: "${env.BRANCH_NAME} - Build#${currentBuild.number} - ${currentBuild.currentResult}!",
     body: """<strong>branch</strong> : ${env.BRANCH_NAME}<br>
