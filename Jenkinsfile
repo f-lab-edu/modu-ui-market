@@ -4,8 +4,6 @@ pipeline {
   agent any
   environment {
     FROM_EMAIL = 'modu-ui-market jenkins <yujin.moma@gmail.com>';
-    //TO_EMAIL = 'jungcali94@gmail.com,ckdbwls11@naver.com';
-    TO_EMAIL = 'ckdbwls11@naver.com';
   }
   stages{
     stage('Git Checkout') {
@@ -13,13 +11,15 @@ pipeline {
         checkout scm
         echo 'Git Checkout Success!'
       }
+      post {
+        failure {
+          doFailPost();
+        }
+      }
     }
 
     stage('Test') {
       steps {
-        echo 'ERROR: script returned exit code -1'
-        sh 'exit 1' //TEST
-
         sh 'chmod +x gradlew'
         sh './gradlew test'
         echo 'test success'
@@ -36,6 +36,11 @@ pipeline {
         sh './gradlew clean build -x test'
         echo 'build success'
       }
+      post {
+        failure {
+          doFailPost();
+        }
+      }
     }
 
     stage('Deploy') {
@@ -49,6 +54,11 @@ pipeline {
           sh "ssh -o StrictHostKeyChecking=no -t moma@${env.DEPLOY_HOST} -p ${env.DEPLOY_PORT} ./deploy.sh product ${env.DB_URL} ${env.DB_USERNAME} ${env.DB_PASSWORD}"
         }
         echo 'deploy success'
+      }
+      post {
+        failure {
+          doFailPost();
+        }
       }
     }
   }
@@ -73,25 +83,6 @@ void doFailPost(){
   echo "[${env.STAGE_NAME}] stage failed..."
   setBuildStatus("Build failed [stage:${env.STAGE_NAME}]", 'FAILURE');
 
-/*   script{
-    def developers = emailextrecipients([[$class: 'DevelopersRecipientProvider']])
-    def upstreamDevelopers = emailextrecipients([[$class: 'UpstreamComitterRecipientProvider']])
-    def culprits = emailextrecipients([[$class: 'CulpritsRecipientProvider']])
-    echo "developers = ${developers}"
-    echo "upstreamDevelopers = ${upstreamDevelopers}"
-    echo "culprits = ${culprits}"
-
-  } */
-
-//   script{
-//     def full_error_msg = $(curl -s -k -X "GET" "$build_url/consoleText" 2> /dev/null | tr -d '\n')
-//     echo "full_error_msg = ${full_error_msg}"
-//   }
-//   try {
-//     sh 'curl -s -k -X GET "http://61.97.186.239:18080/job/modu-ui-market(yujin)/job/feature%252F34%252Fcicd-fail-alarm/103/consoleText"'
-//   } catch(err) {
-//     echo err
-//   }
   def buildLogs = currentBuild.rawBuild.getLog(100)
   def buildLogStr = buildLogs.join('\n')
 
@@ -110,15 +101,3 @@ void doFailPost(){
     to: "${env.FROM_EMAIL}",
     recipientProviders : [developers(),culprits(),buildUser()]
 }
-
-/*
-@NonCPS
-def getBuildLog() {
-  try {
-    def log = currentBuild.rawBuild.getLog(100)
-    print log
-  } catch(err) {
-    echo err
-  }
-  return log
-}*/
