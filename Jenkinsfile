@@ -88,7 +88,7 @@ void doFailPost(){
 //     echo "full_error_msg = ${full_error_msg}"
 //   }
   try {
-    sh 'curl -X GET "http://61.97.186.239:18080/job/modu-ui-market(yujin)/job/feature%252F34%252Fcicd-fail-alarm/103/consoleText"'
+    sh 'curl -s -k -X GET "http://61.97.186.239:18080/job/modu-ui-market(yujin)/job/feature%252F34%252Fcicd-fail-alarm/103/consoleText"'
   } catch(err) {
     echo err
   }
