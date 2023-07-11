@@ -94,8 +94,8 @@ void doFailPost(){
 //   }
    try {
       echo currentBuild.durationString
-      def log = getBuildLog();
-      echo log
+      def buildLog = getBuildLog();
+      echo buildLog
     } catch(err) {
       echo err
     }
