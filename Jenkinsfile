@@ -73,8 +73,18 @@ void doFailPost(){
   echo "[${env.STAGE_NAME}] stage failed..."
   setBuildStatus("Build failed [stage:${env.STAGE_NAME}]", 'FAILURE');
 
+/*   script{
+    def developers = emailextrecipients([[$class: 'DevelopersRecipientProvider']])
+    def upstreamDevelopers = emailextrecipients([[$class: 'UpstreamComitterRecipientProvider']])
+    def culprits = emailextrecipients([[$class: 'CulpritsRecipientProvider']])
+    echo "developers = ${developers}"
+    echo "upstreamDevelopers = ${upstreamDevelopers}"
+    echo "culprits = ${culprits}"
+
+  } */
+
   script{
-    def full_error_msg = $(curl -s -k -X GET $url/job/$job_name/lastBuild/consoleText 2> /dev/null | tac | grep Error | head -n 2 | tr -d '\n')
+    def full_error_msg = $(curl -s -k -X GET $build_url/consoleText 2> /dev/null | tr -d '\n')
     echo "full_error_msg = ${full_error_msg}"
   }
 
