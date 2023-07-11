@@ -94,9 +94,7 @@ void doFailPost(){
 //   }
    try {
       def buildLogs = currentBuild.rawBuild.getLog(100)
-      for( def log : buildLogs ){
-        echo log
-      }
+      echo buildLogs.join('<br>')
     } catch(err) {
       echo err
     }
