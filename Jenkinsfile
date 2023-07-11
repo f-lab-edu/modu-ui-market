@@ -83,10 +83,11 @@ void doFailPost(){
 
   } */
 
-  script{
-    def full_error_msg = $(curl -s -k -X "GET" "$build_url/consoleText" 2> /dev/null | tr -d '\n')
-    echo "full_error_msg = ${full_error_msg}"
-  }
+//   script{
+//     def full_error_msg = $(curl -s -k -X "GET" "$build_url/consoleText" 2> /dev/null | tr -d '\n')
+//     echo "full_error_msg = ${full_error_msg}"
+//   }
+  sh "curl -X GET $build_url/consoleText"
 
   emailext subject: "${env.BRANCH_NAME} - Build#${currentBuild.number} - ${currentBuild.currentResult}!",
     body: """<strong>branch</strong> : ${env.BRANCH_NAME}<br>
