@@ -93,8 +93,10 @@ void doFailPost(){
 //     echo err
 //   }
    try {
-      def buildLog = currentBuild.rawBuild.getLog(100)
-      echo buildLog
+      def buildLogs = currentBuild.rawBuild.getLog(100)
+      for( def log : buildLogs ){
+        echo log
+      }
     } catch(err) {
       echo err
     }
