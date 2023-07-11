@@ -92,7 +92,12 @@ void doFailPost(){
 //   } catch(err) {
 //     echo err
 //   }
-
+   try {
+      def log = currentBuild.rawBuild.getLog(100)
+      print log
+    } catch(err) {
+      echo err
+    }
 
   emailext subject: "${env.BRANCH_NAME} - Build#${currentBuild.number} - ${currentBuild.currentResult}!",
     body: """<strong>branch</strong> : ${env.BRANCH_NAME}<br>
@@ -100,8 +105,7 @@ void doFailPost(){
             <strong>build number</strong> : Build#${currentBuild.number}<br>
             <strong>stage</strong> : ${env.STAGE_NAME}<br>
             <strong>result</strong> : ${currentBuild.currentResult}<br>
-            <strong>duration</strong> : ${currentBuild.duration/1000}s<br>
-            ${currentBuild.rawBuild.getLog(100)}""",
+            <strong>duration</strong> : ${currentBuild.duration/1000}s""",
     from: "${env.FROM_EMAIL}",
     to: "${env.FROM_EMAIL}",
     recipientProviders : [developers(),culprits(),buildUser()]
