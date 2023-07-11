@@ -71,12 +71,14 @@ void doFailPost(){
   echo "[${env.STAGE_NAME}] stage failed..."
   setBuildStatus("Build failed [stage:${env.STAGE_NAME}]", 'FAILURE');
   try {
-    script{ def recipients = emailextrecipients([ [$class: 'DevelopersRecipientProvider'],[$class: 'CulpritsRecipientProvider']]) }
+    script{
+      def recipients = emailextrecipients([ [$class: 'DevelopersRecipientProvider'],[$class: 'CulpritsRecipientProvider']])
+      echo "recipients = "+$recipients
+    }
   }catch(err) {
      println(err);
   }
 
-  echo "recipients = ${recipients}"
 //   emailext subject: "${env.BRANCH_NAME} - Build#${currentBuild.number} - ${currentBuild.currentResult}!",
 //     body: """<strong>branch</strong> : ${env.BRANCH_NAME}<br>
 //             <strong>url</strong> : <a href=\"${env.JOB_URL}\">${env.JOB_URL}</a><br>
