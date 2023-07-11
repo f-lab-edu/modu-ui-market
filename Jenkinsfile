@@ -87,7 +87,12 @@ void doFailPost(){
 //     def full_error_msg = $(curl -s -k -X "GET" "$build_url/consoleText" 2> /dev/null | tr -d '\n')
 //     echo "full_error_msg = ${full_error_msg}"
 //   }
-  sh "curl -X GET $build_url/consoleText"
+  try {
+    sh 'curl -X GET http://61.97.186.239:18080/job/yujin\'s%20forked%20modu-ui-market/job/feature%252F34%252Fcicd-fail-alarm/103/consoleText'
+  } catch(err) {
+    echo err
+  }
+
 
   emailext subject: "${env.BRANCH_NAME} - Build#${currentBuild.number} - ${currentBuild.currentResult}!",
     body: """<strong>branch</strong> : ${env.BRANCH_NAME}<br>
