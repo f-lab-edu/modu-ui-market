@@ -94,7 +94,8 @@ void doFailPost(){
 //   }
    try {
       def buildLogs = currentBuild.rawBuild.getLog(100)
-      echo buildLogs.join('<br>')
+      def buildLogStr = buildLogs.join('<br>')
+      //echo buildLogs.join('<br>')
     } catch(err) {
       echo err
     }
@@ -105,7 +106,11 @@ void doFailPost(){
             <strong>build number</strong> : Build#${currentBuild.number}<br>
             <strong>stage</strong> : ${env.STAGE_NAME}<br>
             <strong>result</strong> : ${currentBuild.currentResult}<br>
-            <strong>duration</strong> : ${currentBuild.duration/1000}s""",
+            <strong>duration</strong> : ${currentBuild.duration/1000}s<br>
+            <hr/>
+            <strong>build log<strong>
+            <hr/>
+            ${buildLogStr}""",
     from: "${env.FROM_EMAIL}",
     to: "${env.FROM_EMAIL}",
     recipientProviders : [developers(),culprits(),buildUser()]
