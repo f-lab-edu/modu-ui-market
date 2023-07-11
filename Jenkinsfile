@@ -93,8 +93,7 @@ void doFailPost(){
 //     echo err
 //   }
    try {
-      echo currentBuild.durationString
-      def buildLog = getBuildLog();
+      def buildLog = currentBuild.rawBuild.getLog(100)
       echo buildLog
     } catch(err) {
       echo err
@@ -112,6 +111,7 @@ void doFailPost(){
     recipientProviders : [developers(),culprits(),buildUser()]
 }
 
+/*
 @NonCPS
 def getBuildLog() {
   try {
@@ -121,4 +121,4 @@ def getBuildLog() {
     echo err
   }
   return log
-}
+}*/
