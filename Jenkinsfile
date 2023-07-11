@@ -83,8 +83,7 @@ void doFailPost(){
   echo "[${env.STAGE_NAME}] stage failed..."
   setBuildStatus("Build failed [stage:${env.STAGE_NAME}]", 'FAILURE');
 
-  def buildLogs = currentBuild.rawBuild.getLog(100)
-  def buildLogStr = buildLogs.join('\n')
+  def buildLogStr = currentBuild.rawBuild.getLog(100).join('\n')
 
   emailext subject: "${env.BRANCH_NAME} - Build#${currentBuild.number} - ${currentBuild.currentResult}!",
     body: """<strong>branch</strong> : ${env.BRANCH_NAME}<br>
