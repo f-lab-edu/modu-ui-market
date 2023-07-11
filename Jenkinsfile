@@ -72,7 +72,7 @@ void doFailPost(){
   setBuildStatus("Build failed [stage:${env.STAGE_NAME}]", 'FAILURE');
   try {
     script{
-      def recipients = emailextrecipients([ [$class: 'DevelopersRecipientProvider'],[$class: 'CulpritsRecipientProvider']])
+      def recipients = emailextrecipients([ [$class: 'DevelopersRecipientProvider'],[$class: 'ContributorMetadataRecipientProvider']])
       echo "recipients = ${recipients}"
     }
   }catch(err) {
