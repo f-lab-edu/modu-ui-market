@@ -110,7 +110,7 @@ void doFailPost(){
             <hr/>
             <strong>build log<strong>
             <hr/>
-            ${buildLogStr}""",
+            """+buildLogStr,
     from: "${env.FROM_EMAIL}",
     to: "${env.FROM_EMAIL}",
     recipientProviders : [developers(),culprits(),buildUser()]
