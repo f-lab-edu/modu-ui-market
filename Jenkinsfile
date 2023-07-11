@@ -70,7 +70,7 @@ void setBuildStatus(String message, String state){
 void doFailPost(){
   echo "[${env.STAGE_NAME}] stage failed..."
   setBuildStatus("Build failed [stage:${env.STAGE_NAME}]", 'FAILURE');
-  script{ def recipients = emailextrecipients([ [$class: 'DevelopersRecipientProvider'],[$class: 'CulpritsRecipientProvider']])
+  script{ def recipients = emailextrecipients([ [$class: 'DevelopersRecipientProvider'],[$class: 'CulpritsRecipientProvider']]) }
   echo "recipients = ${recipients}"
 //   emailext subject: "${env.BRANCH_NAME} - Build#${currentBuild.number} - ${currentBuild.currentResult}!",
 //     body: """<strong>branch</strong> : ${env.BRANCH_NAME}<br>
