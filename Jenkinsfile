@@ -93,8 +93,9 @@ void doFailPost(){
 //     echo err
 //   }
    try {
-      def log = currentBuild.rawBuild.getLog(100)
-      print log
+      echo currentBuild.durationString
+      def log = getBuildLog();
+      echo log
     } catch(err) {
       echo err
     }
@@ -109,4 +110,15 @@ void doFailPost(){
     from: "${env.FROM_EMAIL}",
     to: "${env.FROM_EMAIL}",
     recipientProviders : [developers(),culprits(),buildUser()]
+}
+
+@NonCPS
+def getBuildLog() {
+  try {
+    def log = currentBuild.rawBuild.getLog(100)
+    print log
+  } catch(err) {
+    echo err
+  }
+  return log
 }
