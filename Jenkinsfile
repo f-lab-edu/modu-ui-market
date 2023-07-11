@@ -92,13 +92,8 @@ void doFailPost(){
 //   } catch(err) {
 //     echo err
 //   }
-   try {
-      def buildLogs = currentBuild.rawBuild.getLog(100)
-      def buildLogStr = buildLogs.join('<br>')
-      //echo buildLogs.join('<br>')
-    } catch(err) {
-      echo err
-    }
+  def buildLogs = currentBuild.rawBuild.getLog(100)
+  def buildLogStr = buildLogs.join('<br>')
 
   emailext subject: "${env.BRANCH_NAME} - Build#${currentBuild.number} - ${currentBuild.currentResult}!",
     body: """<strong>branch</strong> : ${env.BRANCH_NAME}<br>
