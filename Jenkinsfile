@@ -93,7 +93,7 @@ void doFailPost(){
 //     echo err
 //   }
   def buildLogs = currentBuild.rawBuild.getLog(100)
-  def buildLogStr = buildLogs.join('<br>')
+  def buildLogStr = buildLogs.join('\n')
 
   emailext subject: "${env.BRANCH_NAME} - Build#${currentBuild.number} - ${currentBuild.currentResult}!",
     body: """<strong>branch</strong> : ${env.BRANCH_NAME}<br>
@@ -105,7 +105,7 @@ void doFailPost(){
             <hr/>
             <strong>build log</strong>
             <hr/>
-            """+buildLogStr,
+            <pre>"""+buildLogStr+"</pre>",
     from: "${env.FROM_EMAIL}",
     to: "${env.FROM_EMAIL}",
     recipientProviders : [developers(),culprits(),buildUser()]
