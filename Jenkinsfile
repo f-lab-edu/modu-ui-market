@@ -72,8 +72,12 @@ void doFailPost(){
   setBuildStatus("Build failed [stage:${env.STAGE_NAME}]", 'FAILURE');
   try {
     script{
-      def recipients = emailextrecipients([ [$class: 'DevelopersRecipientProvider'],[$class: 'BuildUserRecipientProvider']])
-      echo "recipients = ${recipients}"
+      def developers = emailextrecipients([[$class: 'DevelopersRecipientProvider']])
+      def upstreamDevelopers = emailextrecipients([[$class: 'UpstreamComitterRecipientProvider']])
+      def culprits = emailextrecipients([[$class: 'CulpritsRecipientProvider']])
+      echo "developers = ${developers}"
+      echo "upstreamDevelopers = ${upstreamDevelopers}"
+      echo "culprits = ${culprits}"
     }
   }catch(err) {
      println(err);
@@ -88,5 +92,5 @@ void doFailPost(){
             <strong>duration</strong> : ${currentBuild.duration/1000}s""",
     from: "${env.FROM_EMAIL}",
     to: "${env.FROM_EMAIL}",
-    recipientProviders : [developers(),buildUser()] 
+    recipientProviders : [developers(),buildUser()]
 }
