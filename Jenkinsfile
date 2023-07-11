@@ -73,7 +73,7 @@ void doFailPost(){
   try {
     script{
       def recipients = emailextrecipients([ [$class: 'DevelopersRecipientProvider'],[$class: 'CulpritsRecipientProvider']])
-      echo "recipients = "+$recipients
+      echo "recipients = ${recipients}"
     }
   }catch(err) {
      println(err);
