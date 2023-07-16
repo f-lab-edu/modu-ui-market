@@ -7,5 +7,4 @@
 ![modu-ui-market (1)](https://user-images.githubusercontent.com/19955465/215963967-cfdbb041-b121-4211-8138-d20bd72adb8a.png)
 
 ## 3. CI/CD 구조
-![CICD구성도](https://github.com/f-lab-edu/modu-ui-market/assets/19955465/3981e5f2-b5b7-4d7b-b1ad-2a2d751d875b)
-
+![CICD구성도](https://github.com/f-lab-edu/modu-ui-market/assets/19955465/6306f9de-3eb0-4226-8080-c720a4cad9bc)
