@@ -11,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 public class UserDto {
 
@@ -61,6 +62,7 @@ public class UserDto {
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class LoginRequest {
+
         @NotBlank(message = "이메일 주소를 입력해주세요.")
         @Email(message = "올바른 이메일 주소를 입력해주세요.")
         private String email;
@@ -92,6 +94,56 @@ public class UserDto {
         @Builder
         public PasswordRequest(String password) {
             this.password = password;
+        }
+    }
+
+    @Getter
+    @NoArgsConstructor
+    public static class UserResponse {
+
+        private Long id;
+
+        private String email;
+
+        private String name;
+
+        private UserRole role;
+
+        private String phoneNumber;
+
+        @Builder
+        public UserResponse(Long id, String email, String name, UserRole role,
+            String phoneNumber) {
+            this.id = id;
+            this.email = email;
+            this.name = name;
+            this.role = role;
+            this.phoneNumber = phoneNumber;
+        }
+    }
+
+    @Getter
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class UserSearchCondition {
+
+        private Long id;
+
+        private String email;
+
+        private String name;
+
+        private UserRole role;
+
+        private String phoneNumber;
+
+        @Builder
+        public UserSearchCondition(Long id, String email, String name, UserRole role,
+            String phoneNumber) {
+            this.id = id;
+            this.email = email;
+            this.name = name;
+            this.role = role;
+            this.phoneNumber = phoneNumber;
         }
     }
 }

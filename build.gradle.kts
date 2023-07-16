@@ -34,6 +34,22 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.restdocs:spring-restdocs-asciidoctor")
 	testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
+
+	//Querydsl 추가
+	implementation("com.querydsl:querydsl-jpa")
+	annotationProcessor("com.querydsl:querydsl-apt:${dependencyManagement.importedProperties["querydsl.version"]}:jpa")
+	annotationProcessor("jakarta.annotation:jakarta.annotation-api")
+	annotationProcessor("jakarta.persistence:jakarta.persistence-api")
+}
+
+tasks.register("customClean") {
+	doLast {
+		delete("src/main/generated")
+	}
+}
+
+tasks.named("clean").configure {
+	dependsOn("customClean")
 }
 
 tasks {
