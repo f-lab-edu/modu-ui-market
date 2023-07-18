@@ -48,9 +48,6 @@ public class Product extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private ProductStatus status;
 
-    @Version
-    private Long version;
-
     @Builder
     public Product(Market market, String name, Integer stock, Integer price, byte[] image,
         ProductStatus status) {

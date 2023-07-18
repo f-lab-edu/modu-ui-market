@@ -18,6 +18,9 @@ import com.flab.modu.product.service.ProductService;
 import com.flab.modu.users.domain.common.UserRole;
 import com.flab.modu.users.domain.entity.User;
 import com.flab.modu.users.repository.UserRepository;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -91,41 +94,41 @@ public class OrderServiceConcurrencyTest {
     }
 
     @Test
-    @DisplayName("낙관적 락 예외처리 테스트")
-    void concurrency_transaction_rollback_test() throws Exception {
+    @DisplayName("비관적 락 동시성 테스트")
+    void pessimistic_write_transaction_concurrency_test() throws Exception {
         // given
         int orderAmount = 1;
+        int threadCount = 19;
         OrderRequest orderRequest = createOrderRequest(orderAmount);
-        ExecutorService executorService = Executors.newFixedThreadPool(3);
+        ExecutorService threadPool = Executors.newFixedThreadPool(10);
 
-        // when
-        Future<?> future = executorService.submit(
-            () -> {
-                orderCallService.callOrder(orderRequest, EMAIL);
-            });
-        Future<?> future2 = executorService.submit(
-            () -> {
-                orderCallService.callOrder(orderRequest, EMAIL);
-            });
-        Future<?> future3 = executorService.submit(
-            () -> {
-                orderCallService.callOrder(orderRequest, EMAIL);
-            });
+        List<Future<Long>> futures = new ArrayList<>();
+        for (int i=0; i<threadCount; i++) {
+            // callable 객체를 통해 어떤 일을 수행할지 결정한다.
+            Callable<Long> callable = new Callable<Long>() {
+                @Override
+                public Long call() throws Exception {
+                    System.out.println("callOrder!!");
+                    return orderCallService.callOrder(orderRequest, EMAIL);
+                }
+            };
 
-        Exception result = new Exception();
+            // 생성된 callable들을 threadpool에서 수행시킴
+            futures.add(threadPool.submit(callable));
+        }
 
         try {
-            future.get();
-            future2.get();
-            future3.get();
+            threadPool.shutdown();
+            for (Future<Long> future : futures) {
+                future.get();
+            }
         } catch (ExecutionException e) {
-            result = (Exception) e.getCause();
+            e.printStackTrace();
         }
 
         // then
-        assertTrue(result instanceof OrderFailureException);
         Product product = productService.getProduct(savedProduct.getId());
-        assertEquals(product.getStock(), savedProduct.getStock() - orderAmount);
+        assertEquals(product.getStock(), savedProduct.getStock() - orderAmount*threadCount);
     }
 
     private OrderDto.OrderRequest createOrderRequest(int orderAmount) {
