@@ -18,10 +18,15 @@ import com.flab.modu.product.service.ProductService;
 import com.flab.modu.users.domain.common.UserRole;
 import com.flab.modu.users.domain.entity.User;
 import com.flab.modu.users.repository.UserRepository;
+import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.IntStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -95,37 +100,37 @@ public class OrderServiceConcurrencyTest {
     void concurrency_transaction_rollback_test() throws Exception {
         // given
         int orderAmount = 1;
+        int threadCount = 11;
         OrderRequest orderRequest = createOrderRequest(orderAmount);
-        ExecutorService executorService = Executors.newFixedThreadPool(3);
+        ExecutorService threadPool = Executors.newFixedThreadPool(10);
 
         // when
-        Future<?> future = executorService.submit(
-            () -> {
-                orderCallService.callOrder(orderRequest, EMAIL);
-            });
-        Future<?> future2 = executorService.submit(
-            () -> {
-                orderCallService.callOrder(orderRequest, EMAIL);
-            });
-        Future<?> future3 = executorService.submit(
-            () -> {
-                orderCallService.callOrder(orderRequest, EMAIL);
-            });
+//        List<Future<Long>> futures = new ArrayList<>();
+//        IntStream.range(0, threadCount)
+//            .forEach(i -> {
+//                Callable<Long> callable = () -> orderService.createOrder(orderRequest, EMAIL);
+//                futures.add(threadPool.submit(callable));
+//            });
+//
+//        threadPool.shutdown();
+//        for (Future<Long> future : futures) {
+//            future.get();
+//        }
 
-        Exception result = new Exception();
+        List<Thread> threads = new ArrayList<>();
+        for (int i = 0; i < threadCount; i++) {
+            Thread thread = new Thread(() -> orderService.createOrder(orderRequest, EMAIL));
+            threads.add(thread);
+            thread.start(); //쓰레드 시작
+        }
 
-        try {
-            future.get();
-            future2.get();
-            future3.get();
-        } catch (ExecutionException e) {
-            result = (Exception) e.getCause();
+        for (Thread thread : threads) {
+            thread.join(); // 쓰레드 100개가 끝날 때까지 기다리기
         }
 
         // then
-        assertTrue(result instanceof OrderFailureException);
         Product product = productService.getProduct(savedProduct.getId());
-        assertEquals(product.getStock(), savedProduct.getStock() - orderAmount);
+        assertEquals(product.getStock(), savedProduct.getStock() - orderAmount * threadCount);
     }
 
     private OrderDto.OrderRequest createOrderRequest(int orderAmount) {
