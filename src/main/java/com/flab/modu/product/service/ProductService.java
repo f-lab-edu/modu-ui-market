@@ -12,9 +12,9 @@ import com.flab.modu.product.exception.NotExistProductException;
 import com.flab.modu.product.exception.WrongImageDataException;
 import com.flab.modu.product.repository.ProductRepository;
 import java.io.IOException;
-import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
